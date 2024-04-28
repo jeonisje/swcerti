@@ -1,0 +1,17 @@
+1 100
+15
+100 4 aaa bbb ccc ddd 3 eee fff ggg
+200 aaa eee
+200 bbb ggg
+500 bbb ccc 0
+200 bbb eee
+500 aaa bbb 1
+400 bbb ccc
+500 aaa ccc 1
+500 eee ggg 2
+400 aaa ddd
+400 bbb aaa
+300 bbb eee
+500 eee ggg 4
+300 bbb ggg
+500 eee ggg 0

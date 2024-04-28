@@ -1,0 +1,57 @@
+1 100
+40
+54
+100 6 gnfhadao xhs qdo hngiitw fnrxxlvu xiz 6 wrbfyjy uobhbipqcx gjpffuxeq orctrtu yrvpkavi utcgo
+400 yrvpkavi uobhbipqcx
+200 xiz orctrtu
+200 qdo wrbfyjy
+300 qdo wrbfyjy
+200 fnrxxlvu orctrtu
+200 hngiitw yrvpkavi
+300 fnrxxlvu orctrtu
+200 xiz yrvpkavi
+200 qdo orctrtu
+200 hngiitw uobhbipqcx
+500 orctrtu uobhbipqcx 1
+200 xhs uobhbipqcx
+200 xiz uobhbipqcx
+400 gjpffuxeq uobhbipqcx
+200 fnrxxlvu wrbfyjy
+400 hngiitw fnrxxlvu
+500 gnfhadao fnrxxlvu 0
+200 qdo utcgo
+400 wrbfyjy yrvpkavi
+400 xhs gnfhadao
+500 utcgo orctrtu 1
+500 utcgo wrbfyjy 0
+200 qdo gjpffuxeq
+200 xhs gjpffuxeq
+200 xiz utcgo
+400 qdo gnfhadao
+500 utcgo uobhbipqcx 4
+500 xhs hngiitw 4
+200 xhs yrvpkavi
+400 orctrtu gjpffuxeq
+300 xhs uobhbipqcx
+500 utcgo gjpffuxeq 4
+500 utcgo gjpffuxeq 4
+200 hngiitw utcgo
+500 gjpffuxeq utcgo 6
+500 qdo hngiitw 6
+200 fnrxxlvu uobhbipqcx
+500 yrvpkavi utcgo 6
+500 utcgo yrvpkavi 6
+500 utcgo yrvpkavi 6
+400 utcgo yrvpkavi
+400 orctrtu uobhbipqcx
+200 gnfhadao yrvpkavi
+400 gjpffuxeq utcgo
+400 wrbfyjy gjpffuxeq
+500 fnrxxlvu qdo 6
+200 gnfhadao orctrtu
+500 hngiitw xhs 6
+500 xhs hngiitw 6
+500 xiz qdo 6
+500 hngiitw xiz 6
+500 fnrxxlvu qdo 6
+400 qdo hngiitw

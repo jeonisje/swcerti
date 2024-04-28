@@ -1,0 +1,17 @@
+1 100
+15
+0 5
+2 -1 white black red
+1 50 3 red white black
+1 35 4 blue red green white
+1 50 3 black red green
+1 45 5 red black white green blue
+3 blue 7
+2 50 white black red
+1 80 3 green white black
+2 52 red white black
+3 blue -4
+1 33 4 green white black blue
+2 38 blue red white
+2 -1 red blue white
+2 33 green white black

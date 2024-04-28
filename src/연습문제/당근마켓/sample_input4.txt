@@ -1,0 +1,102 @@
+1 100
+100
+0 20
+1 374382 3 lpglfo qevrqqqg ylgbym
+1 914623 5 nkeayvr ynahp orddswv vmhkobjts ylgbym
+1 205681 5 cmyylz qevrqqqg ylgbym dpsbhmdb orddswv
+1 861678 5 lpglfo xqstwhx pxxepxi dpsbhmdb orddswv
+1 225601 3 nkeayvr saj xqstwhx
+1 87121 5 hxizw saj dkm sqjr jrbpx
+1 419875 4 dpsbhmdb hxizw dkm saj
+3 cmyylz 4538
+1 942795 5 hqgl orddswv cmyylz ylgbym nkeayvr
+2 942795 hqgl ylgbym orddswv
+2 419875 saj dpsbhmdb dkm
+2 210219 dpsbhmdb qevrqqqg cmyylz
+1 8542 3 eepuch dkm baykpi
+1 519286 3 xqstwhx sqjr ynahp
+1 418302 4 sqjr lpglfo baykpi saj
+1 659439 5 eepuch orddswv ylgbym dpsbhmdb hqgl
+1 287836 5 sqjr eepuch qevrqqqg lpglfo saj
+2 -1 ylgbym cmyylz pxxepxi
+1 630840 3 dpsbhmdb hxizw hqgl
+1 271944 3 pxxepxi baykpi ynahp
+2 87121 saj hxizw sqjr
+1 803205 3 eepuch kqqi nkeayvr
+1 996629 4 hqgl xqstwhx dpsbhmdb ynahp
+1 663627 5 orddswv ynahp nkeayvr kqqi dkm
+2 271944 pxxepxi ynahp baykpi
+1 405600 4 dpsbhmdb cmyylz baykpi jrbpx
+1 983634 5 sqjr eepuch xqstwhx lpglfo qevrqqqg
+2 803205 eepuch nkeayvr kqqi
+2 405600 dpsbhmdb baykpi jrbpx
+2 996629 dpsbhmdb xqstwhx ynahp
+2 663627 ynahp dkm orddswv
+1 393907 5 kqqi saj xqstwhx hqgl hxizw
+1 625480 5 qevrqqqg kqqi orddswv ynahp hqgl
+1 982134 5 xqstwhx orddswv hqgl dkm ynahp
+1 274149 3 dpsbhmdb orddswv kqqi
+2 983634 sqjr eepuch xqstwhx
+1 411278 5 hxizw pxxepxi kqqi eepuch ynahp
+2 287836 saj eepuch qevrqqqg
+1 503560 5 nkeayvr xqstwhx kqqi dkm ylgbym
+1 803745 5 sqjr dkm orddswv hqgl lpglfo
+1 744531 5 vmhkobjts orddswv baykpi hqgl jrbpx
+1 252359 5 jrbpx saj baykpi lpglfo sqjr
+1 664260 3 saj cmyylz ylgbym
+2 803745 dkm hqgl orddswv
+1 294800 4 nkeayvr sqjr vmhkobjts jrbpx
+1 46939 5 vmhkobjts cmyylz hqgl ynahp kqqi
+2 294800 sqjr vmhkobjts jrbpx
+3 sqjr -506
+1 410009 3 ynahp orddswv vmhkobjts
+1 932172 5 dpsbhmdb dkm lpglfo sqjr hxizw
+2 -1 vmhkobjts ynahp baykpi
+1 151334 3 orddswv vmhkobjts pxxepxi
+1 216989 5 orddswv jrbpx vmhkobjts ylgbym nkeayvr
+1 838572 3 orddswv qevrqqqg saj
+2 -1 jrbpx cmyylz nkeayvr
+3 sqjr -13859
+2 838572 saj orddswv qevrqqqg
+1 624309 3 ynahp saj vmhkobjts
+3 cmyylz 13351
+2 225601 nkeayvr saj xqstwhx
+3 ynahp 12999
+2 744531 hqgl jrbpx vmhkobjts
+1 630007 4 vmhkobjts dkm xqstwhx kqqi
+1 670093 5 dpsbhmdb dkm ylgbym lpglfo xqstwhx
+2 517920 ynahp sqjr xqstwhx
+2 861678 pxxepxi orddswv xqstwhx
+1 353354 3 ynahp cmyylz ylgbym
+3 sqjr -3538
+1 328363 5 dkm kqqi hxizw ylgbym vmhkobjts
+1 103632 5 dpsbhmdb dkm orddswv ynahp qevrqqqg
+1 807256 4 cmyylz kqqi orddswv jrbpx
+3 eepuch -954
+3 eepuch -377
+1 73196 3 kqqi orddswv hqgl
+2 328363 vmhkobjts ylgbym hxizw
+1 174676 3 eepuch ylgbym ynahp
+1 925044 4 hqgl xqstwhx eepuch jrbpx
+2 73196 hqgl kqqi orddswv
+2 -1 orddswv xqstwhx pxxepxi
+1 226109 5 eepuch sqjr hqgl dkm pxxepxi
+2 374382 ylgbym qevrqqqg lpglfo
+1 377059 5 qevrqqqg sqjr nkeayvr ynahp xqstwhx
+1 953113 3 lpglfo vmhkobjts xqstwhx
+1 881677 4 sqjr cmyylz kqqi ynahp
+1 400795 3 sqjr ynahp orddswv
+1 827484 4 saj hxizw dkm vmhkobjts
+2 423008 ynahp orddswv vmhkobjts
+2 422946 eepuch ynahp pxxepxi
+3 kqqi -26176
+1 7676 5 eepuch xqstwhx cmyylz nkeayvr kqqi
+1 25971 3 ylgbym orddswv nkeayvr
+2 612303 kqqi orddswv qevrqqqg
+2 234456 baykpi saj sqjr
+1 256550 5 pxxepxi dpsbhmdb orddswv sqjr jrbpx
+2 855501 sqjr ynahp cmyylz
+1 315531 3 dkm ynahp saj
+1 148353 5 sqjr dkm dpsbhmdb kqqi baykpi
+1 436629 3 nkeayvr jrbpx dkm
+2 637308 vmhkobjts saj ynahp

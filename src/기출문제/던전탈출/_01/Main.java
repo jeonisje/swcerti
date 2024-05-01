@@ -45,34 +45,35 @@ class UserSolution {
 		int[][] visited = new int[N][N];
 		
 		ArrayDeque<Node> q = new ArrayDeque<>();		
-		q.add(new Node(row, col, 0, maxStemina));
-		visited[row][col] = 1;
+		q.add(new Node(row, col));
+		visited[row][col] = 0;
 		
 		while(!q.isEmpty()) {
 			Node cur = q.poll();
 			
-			if(cur.stemina <= 0) {
-				continue;
+			int foundGate = map[cur.row][cur.col] - GATE_CONSTANT;
+			
+			if(foundGate != id && foundGate > 0) {					
+				//if(removed[foundGate] != 1) {
+					graph.get(foundGate).add(new Gate(id, visited[cur.row][cur.col]));
+					graph.get(id).add(new Gate(foundGate, visited[cur.row][cur.col]));
+				//}				
 			}			
+			
+			if(visited[cur.row][cur.col]  == maxStemina) {
+				continue;
+			}	
 		
 			for(int i=0; i<4; i++) {
 				int nextRow = cur.row + directRow[i];
-				int nextCol = cur.col + directCol[i];		
-				
+				int nextCol = cur.col + directCol[i];						
 				if(map[nextRow][nextCol] == 1) continue;
-				if(visited[nextRow][nextCol] == 1) continue;			
+				if(visited[nextRow][nextCol] != 0) continue;			
 				
-				int foundGate = map[nextRow][nextCol] - GATE_CONSTANT;
 				
-				if(foundGate > 0) {					
-					if(removed[foundGate] != 1) {
-						graph.get(foundGate).add(new Gate(id, cur.count + 1));
-						graph.get(id).add(new Gate(foundGate, cur.count + 1));
-					}				
-				}
-				
-				q.add(new Node(nextRow, nextCol, cur.count + 1, cur.stemina - 1));
-				visited[nextRow][nextCol]  = 1;				
+				visited[nextRow][nextCol]  = visited[cur.row][cur.col] + 1;		
+				q.add(new Node(nextRow, nextCol));
+					
 			}			
 		}		 
 	}
@@ -97,9 +98,7 @@ class UserSolution {
 			
 			if(dist[cur.id] < cur.cost) continue;
 			
-			//for(Gate next : graph.get(cur.id)) {
-			for(int i=0; i<graph.get(cur.id).size(); i++) {
-				Gate next = graph.get(cur.id).get(i);
+			for(Gate next : graph.get(cur.id)) {
 				if(removed[next.id] == 1) continue;
 				if(dist[next.id] <= cur.cost + next.cost) continue;
 				dist[next.id] = cur.cost + next.cost;
@@ -113,16 +112,12 @@ class UserSolution {
 	
 	class Node {
 		int row;
-		int col;
-		int count;
-		int stemina;
+		int col;		
 		
-		public Node(int row, int col, int count, int stemina) {
+		public Node(int row, int col) {
 			this.row = row;
 			this.col = col;
-			this.count = count;
-			this.stemina = stemina;
-		}		
+		}
 	}
 	
 	class Gate implements Comparable<Gate>{

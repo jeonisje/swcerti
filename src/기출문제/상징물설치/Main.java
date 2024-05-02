@@ -9,6 +9,7 @@ class UserSolution {
 	final int MAX_BEAM = 201;
 	
 	HashMap<Integer, Integer> oneCombi;
+	HashMap<Integer, Integer> numberSet;
 	HashMap<Integer, ArrayList<Integer []>> twoCombi;
 	HashMap<Integer, Integer> countByNumber;
 		
@@ -17,6 +18,7 @@ class UserSolution {
 	
     public void init() {
     	oneCombi = new HashMap<>();
+    	numberSet = new HashMap<>();
     	twoCombi = new HashMap<>();
     	countByNumber = new HashMap<>();
     	
@@ -31,7 +33,8 @@ class UserSolution {
     	
     	beam[sequence] = mLength;
     	
-    	oneCombi.put(mLength, mLength);
+    	oneCombi.put(sequence, mLength);
+    	numberSet.put(mLength, mLength);
     	
     	int count = countByNumber.getOrDefault(mLength, 0);
     	countByNumber.put(mLength, count);
@@ -48,29 +51,131 @@ class UserSolution {
     }
      
     public int requireSingle(int mHeight) {
+    	
+    	int maxLong = Integer.MAX_VALUE;
+    	int subMaxLong = 0;
     	for(Entry<Integer, Integer> entry : oneCombi.entrySet()) {
-    		int diff = mHeight - entry.getKey();
+    		subMaxLong = 0;
+    		int[] used = new int[MAX_BEAM];    	
+    		used[entry.getKey()] = 1;
+    		
+    		int num0 = entry.getValue();
+    		int diff = mHeight - num0;
+    		
+    		if(diff == 0) {
+    			subMaxLong = Math.max(subMaxLong, num0);
+    			maxLong = Math.min(subMaxLong, maxLong);
+    		}  else {
+    			if(numberSet.containsKey(diff)) {
+    				int num1 = numberSet.get(diff);
+    				subMaxLong = Math.max(subMaxLong, num0);
+    				subMaxLong = Math.max(subMaxLong, num1);
+    			}
+    		}
     		
     		if(!twoCombi.containsKey(diff)) continue;
     		
     		ArrayList<Integer []> combiList = twoCombi.get(diff);
-    		int[] used = new int[MAX_BEAM];    	
+    		
     		for(int i=0; i<combiList.size(); i++) {
     			int seq1 = combiList.get(i)[0];
     			int seq2 = combiList.get(i)[1];
     			if(used[seq1] == 1 || used[seq2] == 2) continue;
     			int num1= beam[seq1];
     			int num2= beam[seq2];
+    			subMaxLong = Math.max(subMaxLong, num0);
+    			subMaxLong = Math.max(subMaxLong, num1);
+    			subMaxLong = Math.max(subMaxLong, num2);
     		}
-    		
-    		
-    		
+    		    		
+    		if(subMaxLong != 0) {    			
+    			maxLong = Math.min(subMaxLong, maxLong);
+    		}    		
     	}
-        return -1;
+    	
+    	
+        return maxLong == Integer.MAX_VALUE ? -1 : maxLong;
     }
      
     public int requireTwin(int mHeight) {
-        return -1;
+    	int made = 0;
+    	
+    	
+    	int maxLong = Integer.MAX_VALUE;
+    	int subMaxLong = 0;
+    	//int[] usedNumber = new int[MAX_BEAM];
+    	//HashSet<Integer> usedNumber = new HashSet<>();
+    	
+    	for(Entry<Integer, Integer> entry : oneCombi.entrySet()) {
+    		//int[] used = new int[MAX_BEAM];
+    		HashSet<Integer> used = new HashSet<>();
+    		
+    		subMaxLong = 0;
+    		made = 0;
+    		//used[entry.getKey()] = 1;
+    		
+    		int seq0 = entry.getKey();
+    		int num0 = entry.getValue();    		
+    		//if(num0 > mHeight) continue;
+    		
+    		int diff = mHeight - num0;
+    		
+    		//if(diff == 0)  continue;
+    		if(twoCombi.containsKey(diff)) {    		
+	    		ArrayList<Integer []> combiList = twoCombi.get(diff);
+	    		
+	    		for(int i=0; i<combiList.size(); i++) {
+	    			int seq1 = combiList.get(i)[0];
+	    			int seq2 = combiList.get(i)[1];
+	    			if(used.contains(seq1) || used.contains(seq2)) continue;
+	    			if(seq0 == seq1 || seq0 == seq2) continue;
+	    			int num1= beam[seq1];
+	    			int num2= beam[seq2];
+	    			subMaxLong = Math.max(subMaxLong, num0);
+	    			subMaxLong = Math.max(subMaxLong, num1);
+	    			subMaxLong = Math.max(subMaxLong, num2);
+	    			used.add(num0);
+	    			used.add(num1);
+	    			used.add(num2);
+	    			made++;
+	    			break;
+	    		}
+    		}
+    		
+    		if(made < 2) {
+	    		if(maxLong == Integer.MAX_VALUE) {
+	        		if(twoCombi.containsKey(mHeight)) { 
+		        		for(Integer[] seq : twoCombi.get(mHeight)) {
+		        			if(used.contains(seq[0]) || used.contains(seq[1])) continue;
+		        			subMaxLong = Math.max(subMaxLong, beam[seq[0]]);
+		        			subMaxLong = Math.max(subMaxLong, beam[seq[1]]);
+		        			used.add(seq[0]);
+			    			used.add(seq[1]);
+		        			made++;
+		        		}
+	        		}
+	        	}
+    		}
+    		
+    		if(made < 2) {
+    			if(numberSet.containsKey(mHeight)) {
+    				subMaxLong = Math.max(subMaxLong, mHeight);
+    				made++;
+    			}
+    		}
+    		
+    		    		
+    		if(made >= 2) {    			
+    			maxLong = Math.min(subMaxLong, maxLong);
+    		}
+    		
+    	}
+    	
+    	
+        return maxLong == Integer.MAX_VALUE  ? -1 : maxLong;
+    	
+    	
+       
     }
 }
 

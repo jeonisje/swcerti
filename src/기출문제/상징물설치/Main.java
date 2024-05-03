@@ -1,26 +1,28 @@
 package 기출문제.상징물설치;
 
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 class UserSolution {
 	final int MAX_BEAM = 201;
 	
 	HashMap<Integer, Integer> oneCombi;
-	HashMap<Integer, Integer> numberSet;
 	HashMap<Integer, ArrayList<Integer []>> twoCombi;
-	HashMap<Integer, Integer> countByNumber;
+	HashMap<Integer, ArrayList<Integer>> seqByNumber;
 		
 	int[] beam;
 	int sequence;
 	
     public void init() {
     	oneCombi = new HashMap<>();
-    	numberSet = new HashMap<>();
     	twoCombi = new HashMap<>();
-    	countByNumber = new HashMap<>();
+    	seqByNumber = new HashMap<>();
     	
     	beam = new int[MAX_BEAM];    	
     	
@@ -31,13 +33,11 @@ class UserSolution {
     public void addBeam(int mLength) {
     	sequence++;
     	
-    	beam[sequence] = mLength;
-    	
-    	oneCombi.put(sequence, mLength);
-    	numberSet.put(mLength, mLength);
-    	
-    	int count = countByNumber.getOrDefault(mLength, 0);
-    	countByNumber.put(mLength, count);
+    	beam[sequence] = mLength;    	
+    	oneCombi.put(sequence, mLength);    	
+    	ArrayList<Integer> list0 = seqByNumber.getOrDefault(mLength, new ArrayList<Integer>());
+    	list0.add(sequence);
+    	seqByNumber.put(mLength, list0);
     	
     	if(sequence < 2) return;
     	
@@ -50,8 +50,7 @@ class UserSolution {
         return;
     }
      
-    public int requireSingle(int mHeight) {
-    	
+    public int requireSingle(int mHeight) {    	
     	int maxLong = Integer.MAX_VALUE;
     	int subMaxLong = 0;
     	for(Entry<Integer, Integer> entry : oneCombi.entrySet()) {
@@ -59,6 +58,7 @@ class UserSolution {
     		int[] used = new int[MAX_BEAM];    	
     		used[entry.getKey()] = 1;
     		
+    		int seq0 = entry.getKey();
     		int num0 = entry.getValue();
     		int diff = mHeight - num0;
     		
@@ -66,117 +66,144 @@ class UserSolution {
     			subMaxLong = Math.max(subMaxLong, num0);
     			maxLong = Math.min(subMaxLong, maxLong);
     		}  else {
-    			if(numberSet.containsKey(diff)) {
-    				int num1 = numberSet.get(diff);
-    				subMaxLong = Math.max(subMaxLong, num0);
-    				subMaxLong = Math.max(subMaxLong, num1);
+    			if(seqByNumber.containsKey(diff)) {
+    				for(int seq : seqByNumber.get(diff)) {
+    					if(seq != seq0) {
+    						int num1 = diff;
+    	    				subMaxLong = Math.max(subMaxLong, num0);
+    	    				subMaxLong = Math.max(subMaxLong, num1);
+    					}
+    				}
     			}
     		}
-    		
-    		if(!twoCombi.containsKey(diff)) continue;
-    		
-    		ArrayList<Integer []> combiList = twoCombi.get(diff);
-    		
-    		for(int i=0; i<combiList.size(); i++) {
-    			int seq1 = combiList.get(i)[0];
-    			int seq2 = combiList.get(i)[1];
-    			if(used[seq1] == 1 || used[seq2] == 2) continue;
-    			int num1= beam[seq1];
-    			int num2= beam[seq2];
-    			subMaxLong = Math.max(subMaxLong, num0);
-    			subMaxLong = Math.max(subMaxLong, num1);
-    			subMaxLong = Math.max(subMaxLong, num2);
+    		if(subMaxLong != 0) {
+    			maxLong = Math.min(maxLong, subMaxLong);
     		}
-    		    		
-    		if(subMaxLong != 0) {    			
-    			maxLong = Math.min(subMaxLong, maxLong);
-    		}    		
-    	}
-    	
-    	
-        return maxLong == Integer.MAX_VALUE ? -1 : maxLong;
-    }
-     
-    public int requireTwin(int mHeight) {
-    	int made = 0;
-    	
-    	
-    	int maxLong = Integer.MAX_VALUE;
-    	int subMaxLong = 0;
-    	//int[] usedNumber = new int[MAX_BEAM];
-    	//HashSet<Integer> usedNumber = new HashSet<>();
-    	
-    	for(Entry<Integer, Integer> entry : oneCombi.entrySet()) {
-    		//int[] used = new int[MAX_BEAM];
-    		HashSet<Integer> used = new HashSet<>();
     		
-    		subMaxLong = 0;
-    		made = 0;
-    		//used[entry.getKey()] = 1;
-    		
-    		int seq0 = entry.getKey();
-    		int num0 = entry.getValue();    		
-    		//if(num0 > mHeight) continue;
-    		
-    		int diff = mHeight - num0;
-    		
-    		//if(diff == 0)  continue;
     		if(twoCombi.containsKey(diff)) {    		
-	    		ArrayList<Integer []> combiList = twoCombi.get(diff);
-	    		
+	    		ArrayList<Integer []> combiList = twoCombi.get(diff);	    		
 	    		for(int i=0; i<combiList.size(); i++) {
 	    			int seq1 = combiList.get(i)[0];
 	    			int seq2 = combiList.get(i)[1];
-	    			if(used.contains(seq1) || used.contains(seq2)) continue;
-	    			if(seq0 == seq1 || seq0 == seq2) continue;
+	    			if(seq0 == seq1 || seq0 == seq2) continue;	  
 	    			int num1= beam[seq1];
 	    			int num2= beam[seq2];
 	    			subMaxLong = Math.max(subMaxLong, num0);
 	    			subMaxLong = Math.max(subMaxLong, num1);
 	    			subMaxLong = Math.max(subMaxLong, num2);
-	    			used.add(num0);
-	    			used.add(num1);
-	    			used.add(num2);
-	    			made++;
-	    			break;
+	    			maxLong = Math.min(subMaxLong, maxLong);
+	    		}	
+    		}
+    	}    	
+    	
+        return maxLong == Integer.MAX_VALUE ? -1 : maxLong;
+    }
+     
+    public int requireTwin(int mHeight) {    	
+    	ArrayList<Combination> combinations = new ArrayList<>();    
+    	HashSet<Integer> usedDiff = new HashSet<>();
+    	int[] used = new int[MAX_BEAM];
+    	for(Entry<Integer, Integer> entry : oneCombi.entrySet()) {  
+    		int seq0 = entry.getKey();
+    		int num0 = entry.getValue();    
+    		
+    		int diff = mHeight - num0;    		
+    		if(diff == 0) continue;
+    		if(usedDiff.contains(diff)) continue;
+    		usedDiff.add(diff);
+    		if(twoCombi.containsKey(diff)) {    		
+	    		ArrayList<Integer []> combiList = twoCombi.get(diff);
+	    		for(int i=0; i<combiList.size(); i++) {
+	    			int seq1 = combiList.get(i)[0];
+	    			int seq2 = combiList.get(i)[1];	    		
+	    			if(seq0 == seq1 || seq0 == seq2) continue;	    
+	    			if(used[seq0] == 1 && used[seq1] == 1 && used[seq2] == 1) continue;
+	    			Combination c = new Combination(seq0, seq1, seq2);
+	    			combinations.add(c);	  
+	    			setUsed(c, used);
 	    		}
     		}
+    	}    		
     		
-    		if(made < 2) {
-	    		if(maxLong == Integer.MAX_VALUE) {
-	        		if(twoCombi.containsKey(mHeight)) { 
-		        		for(Integer[] seq : twoCombi.get(mHeight)) {
-		        			if(used.contains(seq[0]) || used.contains(seq[1])) continue;
-		        			subMaxLong = Math.max(subMaxLong, beam[seq[0]]);
-		        			subMaxLong = Math.max(subMaxLong, beam[seq[1]]);
-		        			used.add(seq[0]);
-			    			used.add(seq[1]);
-		        			made++;
-		        		}
-	        		}
-	        	}
+		if(twoCombi.containsKey(mHeight)) { 
+    		for(Integer[] seq : twoCombi.get(mHeight)) {
+    			combinations.add(new Combination(seq[0], seq[1], 0));
     		}
+		}
     		
-    		if(made < 2) {
-    			if(numberSet.containsKey(mHeight)) {
-    				subMaxLong = Math.max(subMaxLong, mHeight);
-    				made++;
-    			}
+    	if(seqByNumber.containsKey(mHeight)) {
+    		for(int seq : seqByNumber.get(mHeight)) {
+    			combinations.add(new Combination(seq, 0, 0));
     		}
+    	}    	
+    	
+    	if(combinations.size() < 2) return -1;
+    	
+    	
+    	int maxLong = 0;    	
+    	if(combinations.size() == 2) {
+    		used = new int[MAX_BEAM];
+    		Combination combi1 = combinations.get(0);
+    		Combination combi2 = combinations.get(1);
     		
-    		    		
-    		if(made >= 2) {    			
-    			maxLong = Math.min(subMaxLong, maxLong);
-    		}
+    		maxLong = getMax(combi1);
+    		setUsed(combi1, used);
+    		used[combi1.seq1] = 1;    		
     		
+    		if(!isAvailable(combi2, used)) return -1;     		
+    		maxLong = Math.max(maxLong,getMax(combi2));
+    		
+    		return maxLong;
     	}
     	
+    	maxLong = Integer.MAX_VALUE;
+		for (int i = 0; i < combinations.size() - 1; i++) {
+			used = new int[MAX_BEAM];
+			setUsed(combinations.get(i), used);
+			int subMax1 = getMax(combinations.get(i));
+			for (int j = i + 1; j < combinations.size(); j++) {
+				if (isAvailable(combinations.get(j), used)) {
+					int subMax2 = getMax(combinations.get(j));
+					maxLong = Math.min(maxLong, Math.max(subMax1, subMax2));
+				}
+			}
+		}
     	
-        return maxLong == Integer.MAX_VALUE  ? -1 : maxLong;
-    	
-    	
-       
+        return maxLong == Integer.MAX_VALUE ? -1 : maxLong; 
     }
+    
+    void setUsed(Combination combi, int[] used) {
+    	used[combi.seq1] = 1;
+		if(combi.seq2 != 0) {
+			used[combi.seq2] = 1;
+		}    		
+		if(combi.seq3 != 0) {
+			used[combi.seq3] = 1;
+		}
+    }
+    
+    boolean isAvailable(Combination combi, int[] used) {
+    	return used[combi.seq1] == 0 && used[combi.seq2] == 0 && used[combi.seq3] == 0;
+    }
+    
+    int getMax(Combination combi) {
+    	int max = 0;
+    	max = Math.max(max, beam[combi.seq1]);
+    	max = Math.max(max, beam[combi.seq2]);
+    	max = Math.max(max, beam[combi.seq3]);
+    	return max;
+    }   
+    
+    class Combination {
+    	int seq1;
+    	int seq2;
+    	int seq3;
+		public Combination(int seq1, int seq2, int seq3) {
+			this.seq1 = seq1;
+			this.seq2 = seq2;
+			this.seq3 = seq3;
+		}
+    } 
 }
 
 class Main {
@@ -246,15 +273,15 @@ class Main {
     }
     
     static void print(int q, String cmd, int ans, int ret, Object...o) {
-    	if(ans != ret) System.err.println("---------------------오류------------------------");
-    	System.out.println("["+q+"] " + cmd +  " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
+    	//if(ans != ret) System.err.println("---------------------오류------------------------");
+    	//System.out.println("["+q+"] " + cmd +  " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
     }
 
     public static void main(String[] args) throws Exception {
     	long start = System.currentTimeMillis();
     	int T, MARK;
 
-        System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\상징물설치\\sample_input2.txt"));
+        System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\상징물설치\\sample_input.txt"));
         br = new BufferedReader(new InputStreamReader(System.in));
 
         StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");

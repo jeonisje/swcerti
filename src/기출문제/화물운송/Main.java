@@ -14,12 +14,14 @@ class UserSolution {
 	int N, K;
 	
 	ArrayList<Node>[] graph;
+	ArrayList<Node>[] graph2;
 	
 	public void init(int N, int K, int[] sCity, int[] eCity, int[] mLimit) {
 		this.N = N;
 		this.K = K;
 		
 		graph = new ArrayList[N+1];
+		graph2 = new ArrayList[N+1];
 		for(int i=0; i<N+1; i++) {
 			graph[i] = new ArrayList<>();
 		}
@@ -32,29 +34,6 @@ class UserSolution {
 	}
 	
 	
-	int bfs(int start, int end) {
-		int[] visited = new int[N];
-		visited[start]  = 1;
-		ArrayDeque<Node> q = new ArrayDeque<>();
-		q.add(new Node(start,0));
-		
-		int max = 0;
-		while(!q.isEmpty()) {
-			Node cur = q.poll();
-			
-			if(cur.id == end) {
-				max = Math.max(cur.limit, max);
-			}
-			
-			for(Node next : graph[cur.id]) {
-				if(visited[next.id] == 1) continue; 
-				int limit = Math.min(cur.limit, next.limit);
-				q.add(new Node(next.id, limit));
-			}
-		}
-		
-		return max;
-	}
 	
 
 	public void add(int sCity, int eCity, int mLimit) {
@@ -63,7 +42,37 @@ class UserSolution {
 	}
 
 	public int calculate(int sCity, int eCity) {
-		return dijkstra(sCity, eCity); 
+		//return dijkstra(sCity, eCity); 
+		return bfs(sCity, eCity);
+	}
+	
+	int bfs(int start, int end) {
+		int[] visited = new int[N];
+		//Arrays.fill(visited, Integer.MAX_VALUE);
+		visited[start]  = 1;
+		ArrayDeque<Node> q = new ArrayDeque<>();
+		q.add(new Node(start, Integer.MAX_VALUE));
+		
+		int max = -1;
+		while(!q.isEmpty()) {
+			Node cur = q.poll();
+			
+			if(cur.id == end) {
+				max = Math.max(cur.limit, max);
+				continue;
+			}
+			
+			for(Node next : graph[cur.id]) {
+				//if(next.id == start) continue;
+				if(visited[next.id] == 1) continue; 
+				int limit = Math.min(cur.limit, next.limit);
+				q.add(new Node(next.id, limit));
+				visited[next.id] = 1;
+			}
+		}
+		
+		return max;		
+		
 	}
 	
 	int dijkstra(int start, int end) {
@@ -71,19 +80,19 @@ class UserSolution {
 		Arrays.fill(dist, Integer.MAX_VALUE);
 		
 		PriorityQueue<Node> q = new PriorityQueue<Node>((o1, o2) -> Integer.compare(o1.reversedLimit, o2.reversedLimit));
-		q.add(new Node(start, 0));
+		q.add(new Node(start, MAX_LIMIT));
 		dist[start] = MAX_LIMIT;
 		
 		while(!q.isEmpty()) {
 			Node cur = q.poll();
 			if(cur.id == end) {
-				return cur.limit;
+				return dist[cur.id];
 			}
 			
 			for(Node next : graph[cur.id]) {
-				if(dist[next.id] <= cur.reversedLimit) continue;
-				dist[next.id] = next.reversedLimit;
-				q.add(new Node(next.id, next.limit));
+				if(dist[next.id] >= cur.limit) continue;
+				dist[next.id] = Math.min(next.limit, cur.limit);
+				q.add(new Node(next.id, dist[next.id]));
 				
 			}
 				

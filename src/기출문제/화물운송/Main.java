@@ -10,38 +10,23 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 class UserSolution {
-	final int LIMIT_WEIGHT = 30_001;
+	final int MAX_LIMIT = 30_001;
 	int N, K;
 	
 	ArrayList<Node>[] graph;
-	ArrayList<Node>[] graph2;
 	
 	public void init(int N, int K, int[] sCity, int[] eCity, int[] mLimit) {
 		this.N = N;
 		this.K = K;
 		
 		graph = new ArrayList[N+1];
-		graph2 = new ArrayList[N+1];
 		for(int i=0; i<N+1; i++) {
 			graph[i] = new ArrayList<>();
-			graph2[i] = new ArrayList<>();
 		}
 		
 		for(int i=0; i<K; i++) {
 			graph[sCity[i]].add(new Node(eCity[i], mLimit[i]));			
 		}
-		
-		for(int i=0; i<N+1; i++) {
-			if(graph[i].size() == 0) continue;
-			
-			if(graph[i].size() == 1) {
-				graph2[i].addAll(graph[i]);
-			}
-			
-			
-			
-		}
-		
 		
 		return;
 	}
@@ -78,16 +63,31 @@ class UserSolution {
 	}
 
 	public int calculate(int sCity, int eCity) {
-		return 0; 
+		return dijkstra(sCity, eCity); 
 	}
 	
 	int dijkstra(int start, int end) {
 		int[] dist = new int[N+1];
 		Arrays.fill(dist, Integer.MAX_VALUE);
 		
-		PriorityQueue<Node> q = new PriorityQueue<Node>((o1, o2) -> Integer.compare(o1.cost, o2.cost));
-		q.add(new Node(start, 0, Integer.MAX_VALUE));
+		PriorityQueue<Node> q = new PriorityQueue<Node>((o1, o2) -> Integer.compare(o1.reversedLimit, o2.reversedLimit));
+		q.add(new Node(start, 0));
+		dist[start] = MAX_LIMIT;
 		
+		while(!q.isEmpty()) {
+			Node cur = q.poll();
+			if(cur.id == end) {
+				return cur.limit;
+			}
+			
+			for(Node next : graph[cur.id]) {
+				if(dist[next.id] <= cur.reversedLimit) continue;
+				dist[next.id] = next.reversedLimit;
+				q.add(new Node(next.id, next.limit));
+				
+			}
+				
+		}
 		
 		
 		
@@ -96,11 +96,13 @@ class UserSolution {
 	
 	
 	class Node {
-		int id;
+		int id;		
 		int limit;
+		int reversedLimit;
 		public Node(int id, int limit) {		
 			this.id = id;
 			this.limit = limit;
+			this.reversedLimit = MAX_LIMIT - this.limit;
 		}
 	}
 }
@@ -159,7 +161,7 @@ public class Main {
 				eCity = Integer.parseInt(st.nextToken());
 				ans = Integer.parseInt(st.nextToken());
 				ret = userSolution.calculate(sCity, eCity);
-				print(q, "add", ans, ret, sCity, eCity);
+				print(q, "calculate", ans, ret, sCity, eCity);
 				if(ans != ret)
 					ok = false; 
 				break;
@@ -172,12 +174,12 @@ public class Main {
 	}
 
 	static void print(int q, String cmd, int ans, int ret, Object... o) {
-		 //if(ans != ret)	 System.err.println("---------------------오류------------------------");
-		 //System.out.println("["+q+"] " + cmd + " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
+		 if(ans != ret)	 System.err.println("---------------------오류------------------------");
+		 System.out.println("["+q+"] " + cmd + " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
 	}
 	public static void main(String[] args) throws Exception {
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\화물운송\\sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\화물운송\\sample_input2.txt"));
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");

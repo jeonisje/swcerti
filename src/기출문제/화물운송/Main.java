@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 class UserSolution {
-	final int MAX_LIMIT = 30_001;
+	final int MAX_LIMIT = 30_000;
 	int N, K;
 	
 	ArrayList<Node>[] graph;
@@ -21,7 +21,7 @@ class UserSolution {
 		this.K = K;
 		
 		graph = new ArrayList[N+1];
-		graph2 = new ArrayList[N+1];
+		//graph2 = new ArrayList[N+1];
 		for(int i=0; i<N+1; i++) {
 			graph[i] = new ArrayList<>();
 		}
@@ -29,7 +29,6 @@ class UserSolution {
 		for(int i=0; i<K; i++) {
 			graph[sCity[i]].add(new Node(eCity[i], mLimit[i]));			
 		}
-		
 		return;
 	}
 	
@@ -42,8 +41,12 @@ class UserSolution {
 	}
 
 	public int calculate(int sCity, int eCity) {
-		//return dijkstra(sCity, eCity); 
-		return bfs(sCity, eCity);
+		return dijkstra(sCity, eCity); 
+		//return bfs(sCity, eCity);
+		
+		
+		
+		//return -1;
 	}
 	
 	int bfs(int start, int end) {
@@ -80,8 +83,12 @@ class UserSolution {
 		Arrays.fill(dist, Integer.MAX_VALUE);
 		
 		PriorityQueue<Node> q = new PriorityQueue<Node>((o1, o2) -> Integer.compare(o1.reversedLimit, o2.reversedLimit));
-		q.add(new Node(start, MAX_LIMIT));
-		dist[start] = MAX_LIMIT;
+		//q.add(new Node(start, MAX_LIMIT));
+		dist[start] = 0;
+		
+		for(Node next : graph[start]) {
+			q.add(new Node(next.id, next.limit));
+		}
 		
 		while(!q.isEmpty()) {
 			Node cur = q.poll();
@@ -90,8 +97,8 @@ class UserSolution {
 			}
 			
 			for(Node next : graph[cur.id]) {
-				if(dist[next.id] >= cur.limit) continue;
-				dist[next.id] = Math.min(next.limit, cur.limit);
+				if(dist[next.id] <= cur.limit) continue;
+				dist[next.id] = Math.min(next.limit, dist[next.id]);
 				q.add(new Node(next.id, dist[next.id]));
 				
 			}
@@ -183,8 +190,8 @@ public class Main {
 	}
 
 	static void print(int q, String cmd, int ans, int ret, Object... o) {
-		 if(ans != ret)	 System.err.println("---------------------오류------------------------");
-		 System.out.println("["+q+"] " + cmd + " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
+		if(ans != ret)	 System.err.println("---------------------오류------------------------");
+		System.out.println("["+q+"] " + cmd + " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
 	}
 	public static void main(String[] args) throws Exception {
 		long start = System.currentTimeMillis();

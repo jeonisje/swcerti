@@ -15,35 +15,38 @@ class UserSolution {
 	final int[] P_POWER = {10, 5, 3, 2};
 	
 	int N;
-	int[] pPower;
-	int[] friends1;
-	int[] friends2;
 	
-	int[] parent;	
+	int[] parent;
+	//int[] sumPowerByGroup;
 	
 	TreeMap<Member, Integer> influences;
 	
 	Member[] memberInfo;	
 	ArrayList<Integer>[] memberByGroup;
-	ArrayList<Integer>[] friendsByMember;
+	ArrayList<Integer>[] firstGroupByMember;
+	HashSet<Integer>[] secondGroupByMember;
+	HashSet<Integer>[] thirdGroupByMember;
 	
 	public void init(int N, int[] mPurchasingPower, int M, int[] mFriend1, int[] mFriend2) {
     	this.N = N;
-    	this.friends1 = mFriend1;
-    	this.friends2 = mFriend2;
-    	this.pPower = mPurchasingPower;    	
     	
     	memberByGroup = new ArrayList[N];
-    	friendsByMember  = new ArrayList[N];
+    	firstGroupByMember  = new ArrayList[N];
+    	secondGroupByMember  = new HashSet[N];
+    	thirdGroupByMember  = new HashSet[N];
     	memberInfo = new Member[N];
     	parent =  new int[N];
+    	//sumPowerByGroup =  new int[N];
     	
     	influences = new TreeMap<>(ordered());
     	
     	for(int i=0; i<N; i++) {
     		parent[i] = i;
+    		//sumPowerByGroup[i] = mPurchasingPower[i];
     		memberByGroup[i] = new ArrayList<>(Arrays.asList(i));
-    		friendsByMember[i] = new ArrayList<>();
+    		firstGroupByMember[i] = new ArrayList<>();
+    		secondGroupByMember[i] = new HashSet<>();
+    		thirdGroupByMember[i] = new HashSet<>();
     		Member m = new Member(i, mPurchasingPower[i], mPurchasingPower[i] * 10);
     		memberInfo[i] = m;
     		influences.put(m, 1);
@@ -51,55 +54,60 @@ class UserSolution {
     	}    	    
     	
     	for(int i=0; i<M; i++) {
-    		friendsByMember[mFriend1[i]].add(mFriend2[i]);
-    		friendsByMember[mFriend2[i]].add(mFriend1[i]);
-    		
+    		firstGroupByMember[mFriend1[i]].add(mFriend2[i]);
+    		firstGroupByMember[mFriend2[i]].add(mFriend1[i]);
+    		/*
     		if(friendsByMember[mFriend1[i]].size() < friendsByMember[mFriend2[i]].size()) {
     			union(mFriend2[i], mFriend1[i]);    			
     		} else {
     			union(mFriend1[i], mFriend2[i]);
-    		}
+    		}*/
     	}
     	
     	for(int i=0; i<N; i++) {
-    		setPower(i);
+    		setRelation(i);
     	}
     	
 		return;
 	}
 	
-	void setPower(int id) {
+	void setRelation(int id) {
 		int[] used = new int[N];				
 		used[id] = 1;
 		
-		Member member = memberInfo[id];
+		Member member = memberInfo[id];	
+		
+		int sum0 = member.pPower;
 		int sum1 = 0;
 		int sum2 = 0;
 		int sum3 = 0;
-		int pId = find(id);
 		
 		
-		for(int first : friendsByMember[id]) {
+		for(int first : firstGroupByMember[id]) {
 			if(used[first] == 1) continue;
 			sum1 += memberInfo[first].pPower;
+			
 			used[first] = 1;
-			for(int second : friendsByMember[first]) {
-				if(friendsByMember[id].contains(second)) continue;
+			for(int second : firstGroupByMember[first]) {
+				if(firstGroupByMember[id].contains(second)) continue;
 				if(used[second] == 1) continue;
 				sum2 += memberInfo[second].pPower;
 				used[second] = 1;
+				secondGroupByMember[id].add(second);
+				
+				for(int third : firstGroupByMember[second]) {
+					if(firstGroupByMember[id].contains(third)) continue;
+					//if(firstGroupByMember[first].contains(third)) continue;
+					if(secondGroupByMember[id].contains(third)) continue;
+					if(used[third] == 1) continue;
+					sum3 += memberInfo[third].pPower;
+					used[third] = 1;
+					thirdGroupByMember[id].add(third);
+				}
 			}
 		}
 		
-		
-		
-		for(int third : memberByGroup[pId]) {
-			if(used[third] == 1) continue;
-			sum3 += memberInfo[third].pPower;
-			used[third] = 1;
-		}
-		
-		int totalPower = member.pPower * 10 + sum1 * 5  + sum2 * 3 + sum3 * 2;
+		int totalPower = sum0 * 10 + sum1 * 5  + sum2 * 3 + sum3 * 2;
 		
 		
 		influences.remove(member);
@@ -130,6 +138,7 @@ class UserSolution {
 		
 		parent[pb] = pa;
 		memberByGroup[pa].addAll(memberByGroup[pb]); 
+		//sumPowerByGroup[pa] += sumPowerByGroup[pb];
 	}
 	
 	
@@ -145,12 +154,122 @@ class UserSolution {
 	}
     
 	public int addPurchasingPower(int mID, int mPower) {
-		return 0; 
+		
+		int power = memberInfo[mID].pPower + mPower;
+		memberInfo[mID].pPower = power;
+		
+		HashSet<Integer> target = new HashSet<>();
+		
+		
+		target.addAll(firstGroupByMember[mID]);
+		target.addAll(secondGroupByMember[mID]);
+		target.addAll(thirdGroupByMember[mID]);
+		target.add(mID);
+		
+		for(int id : target) {
+			calcPower(id);
+		}
+		return memberInfo[mID].totalPower; 
 	}
 
-	public int addFriendship(int mID1, int mID2) {
-		return 0 ; 
+	public int addFriendship(int mID1, int mID2) {		
+		
+		HashSet<Integer> target = new HashSet<>();
+		target.add(mID1);
+		target.add(mID2);
+		
+		
+		
+		if(secondGroupByMember[mID1].contains(mID2)) {			
+			for(int third : thirdGroupByMember[mID1]) {
+				if(firstGroupByMember[mID2].contains(third)) {
+					thirdGroupByMember[mID1].remove(third);
+					thirdGroupByMember[third].remove(mID1);
+					secondGroupByMember[mID1].add(third);
+					secondGroupByMember[third].add(mID1);
+				}
+			}
+			/*
+			for(int third : secondGroupByMember[mID2]) {				
+				if(firstGroupByMember[mID1].contains(third)) {
+					thirdGroupByMember[mID2].remove(third);
+					thirdGroupByMember[third].remove(mID2);
+				}
+			}*/
+			secondGroupByMember[mID1].remove(mID2);
+			secondGroupByMember[mID2].remove(mID1);					
+		}
+
+		if(thirdGroupByMember[mID1].contains(mID2)) {			
+			thirdGroupByMember[mID1].remove(mID2);
+			thirdGroupByMember[mID2].remove(mID1);
+		}
+		
+		
+		
+		
+		/*
+		thirdGroupByMember[mID1].addAll(secondGroupByMember[mID2]);
+		secondGroupByMember[mID1].addAll(firstGroupByMember[mID2]);				
+		thirdGroupByMember[mID2].addAll(secondGroupByMember[mID1]);
+		secondGroupByMember[mID2].addAll(firstGroupByMember[mID1]);			
+		 */		
+		
+		//for(int fist)
+		
+		firstGroupByMember[mID1].add(mID2);
+		firstGroupByMember[mID2].add(mID1);
+		
+		
+		target.addAll(thirdGroupByMember[mID1]);
+		target.addAll(thirdGroupByMember[mID2]);
+		target.addAll(secondGroupByMember[mID1]);
+		target.addAll(secondGroupByMember[mID2]);
+		target.addAll(firstGroupByMember[mID1]);
+		target.addAll(firstGroupByMember[mID2]);
+		
+		
+		for(int id : target) {
+			setRelation(id);
+		}
+		
+		return memberInfo[mID1].totalPower + memberInfo[mID2].totalPower ; 
 	}
+	
+	void calcPower(int id) {;		
+		Member member = memberInfo[id];	
+		
+		int sum0 = member.pPower;
+		int sum1 = 0;
+		int sum2 = 0;
+		int sum3 = 0;
+		
+		
+		for(int first : firstGroupByMember[id]) {			
+			sum1 += memberInfo[first].pPower;
+		}
+		
+		for(int second : secondGroupByMember[id]) {			
+			sum2 += memberInfo[second].pPower;
+		}
+		
+		for(int third : thirdGroupByMember[id]) {			
+			sum3 += memberInfo[third].pPower;
+		}
+			
+		
+		int totalPower = sum0 * 10 + sum1 * 5  + sum2 * 3 + sum3 * 2;
+		
+		
+		influences.remove(member);
+		member.totalPower  = totalPower;
+		
+		influences.put(member, totalPower);
+		
+		return;
+	}
+	
+	
 	
 	class Member {
 		int id;
@@ -256,15 +375,15 @@ public class Main
 	}
 	
 	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		//if(ans!=ret) System.err.println("====================오류========================");
-		//System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
+		if(ans!=ret) System.err.println("====================오류========================");
+		System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
 	}
 	public static void main(String[] args) throws Exception
 	{
 		Long start = System.currentTimeMillis();
 		int TC, MARK;
 
-		System.setIn(new java.io.FileInputStream("C://sw certi//workspace//swcerti//src//기출문제//인플루언서//sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("C://sw certi//workspace//swcerti//src//기출문제//인플루언서//sample_input3.txt"));
 		br = new BufferedReader(new InputStreamReader(System.in));
 
 		StringTokenizer st = new StringTokenizer(br.readLine(), " ");

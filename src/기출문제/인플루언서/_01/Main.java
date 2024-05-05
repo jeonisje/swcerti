@@ -3,66 +3,118 @@ package 기출문제.인플루언서._01;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.TreeSet; 
+import java.util.TreeMap; 
 
-class UserSolution {
-	final int P_POWER_0 = 10;
-	final int P_POWER_1 = 5;
-	final int P_POWER_2 = 3;
-	final int P_POWER_3 = 2;
+class UserSolution {	
+	final int[] P_POWER = {10, 5, 3, 2};
 	
-	int N, M;
+	int N;
 	int[] pPower;
 	int[] friends1;
 	int[] friends2;
 	
-	int[] parent;
+	int[] parent;	
 	
+	TreeMap<Member, Integer> influences;
 	
-	TreeSet<Member> influences;
-	
-	Member[] objMapping;
-	
-	ArrayList<Member>[] graph;
+	Member[] memberInfo;	
+	ArrayList<Integer>[] memberByGroup;
+	ArrayList<Integer>[] friendsByMember;
 	
 	public void init(int N, int[] mPurchasingPower, int M, int[] mFriend1, int[] mFriend2) {
     	this.N = N;
-    	this.M = M;
     	this.friends1 = mFriend1;
     	this.friends2 = mFriend2;
     	this.pPower = mPurchasingPower;    	
     	
-    	objMapping = new Member[N];
-    	graph = new ArrayList[N];
+    	memberByGroup = new ArrayList[N];
+    	friendsByMember  = new ArrayList[N];
+    	memberInfo = new Member[N];
+    	parent =  new int[N];
+    	
+    	influences = new TreeMap<>(ordered());
     	
     	for(int i=0; i<N; i++) {
-    		graph[i] = new ArrayList<>();
-    	}
-    	
-    
-    	
-    	influences = new TreeSet<>(ordered());
-    	
-    	for(int i=0; i<M; i++) {    
-    		graph[friends1[i]].add(new Member(friends2[i], pPower[friends2[i]]));
-    		graph[friends2[i]].add(new Member(friends1[i], pPower[friends1[i]]));
-    	}
-		
-    	for(int i=0; i<N; i++) {
+    		parent[i] = i;
+    		memberByGroup[i] = new ArrayList<>(Arrays.asList(i));
+    		friendsByMember[i] = new ArrayList<>();
+    		Member m = new Member(i, mPurchasingPower[i], mPurchasingPower[i] * 10);
+    		memberInfo[i] = m;
+    		influences.put(m, 1);
     		
+    	}    	    
+    	
+    	for(int i=0; i<M; i++) {
+    		friendsByMember[mFriend1[i]].add(mFriend2[i]);
+    		friendsByMember[mFriend2[i]].add(mFriend1[i]);
+    		
+    		if(friendsByMember[mFriend1[i]].size() < friendsByMember[mFriend2[i]].size()) {
+    			union(mFriend2[i], mFriend1[i]);    			
+    		} else {
+    			union(mFriend1[i], mFriend2[i]);
+    		}
     	}
     	
-    	//Collections.sort(influences, ordered());
+    	for(int i=0; i<N; i++) {
+    		setPower(i);
+    	}
     	
+		return;
 	}
-
+	
+	void setPower(int id) {
+		int[] used = new int[N];				
+		used[id] = 1;
+		
+		Member member = memberInfo[id];
+		int sum1 = 0;
+		int sum2 = 0;
+		int sum3 = 0;
+		int pId = find(id);
+		
+		
+		for(int first : friendsByMember[id]) {
+			if(used[first] == 1) continue;
+			sum1 += memberInfo[first].pPower;
+			used[first] = 1;
+			for(int second : friendsByMember[first]) {
+				if(friendsByMember[id].contains(second)) continue;
+				if(used[second] == 1) continue;
+				sum2 += memberInfo[second].pPower;
+				used[second] = 1;
+			}
+		}
+		
+		
+		
+		for(int third : memberByGroup[pId]) {
+			if(used[third] == 1) continue;
+			sum3 += memberInfo[third].pPower;
+			used[third] = 1;
+		}
+		
+		int totalPower = member.pPower * 10 + sum1 * 5  + sum2 * 3 + sum3 * 2;
+		
+		
+		influences.remove(member);
+		member.totalPower  = totalPower;
+		
+		influences.put(member, totalPower);
+		
+		return;
+	}
+	
+	
+	
+	
 	private Comparator<? super Member> ordered() {
-		return (o1, o2) -> o1.pPower == o2.pPower ? Integer.compare(o1.id, o2.id) : Integer.compare(o2.pPower, o1.pPower);
+		return (o1, o2) -> o1.totalPower == o2.totalPower ? Integer.compare(o1.id, o2.id) : Integer.compare(o2.totalPower, o1.totalPower);
 	}
 	
 	int find(int a) {
@@ -71,12 +123,24 @@ class UserSolution {
 	}
 	
 	void union(int a, int b) {
+		int pa = find(a);
+		int pb = find(b);
 		
+		if(pa == pb) return;
+		
+		parent[pb] = pa;
+		memberByGroup[pa].addAll(memberByGroup[pb]); 
 	}
 	
 	
 	public int influencer(int mRank) {
-		//return influences.get(mRank-1).id;
+		int idx = 1;
+		for(Map.Entry<Member, Integer> entry : influences.entrySet()) {
+			if(idx == mRank) {
+				return entry.getKey().id;
+			}
+			idx++;
+		}
 		return 0;
 	}
     
@@ -91,22 +155,16 @@ class UserSolution {
 	class Member {
 		int id;
 		int pPower;
+		int totalPower;
 		
-		public Member(int id, int pPower) {
+		public Member(int id, int pPower, int totalPower) {
 			this.id = id;
 			this.pPower = pPower;
+			this.totalPower = totalPower;
 		}
 	}
 	
-	class Influence {
-		int id;		
-		int count;
-
-		public Influence(int id, int count) {		
-			this.id = id;
-			this.count = count;
-		}	
-	}
+	
 }	
 
 
@@ -125,10 +183,7 @@ public class Main
 
 	private static BufferedReader br;
 	
-	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret) System.err.println("====================오류========================");
-		System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
-	}
+	
 	private static boolean run() throws Exception
 	{
 		StringTokenizer st;
@@ -199,7 +254,11 @@ public class Main
 
 		return isCorrect;
 	}
-
+	
+	static void print(int q, String cmd, int ans, int ret, Object...o) {
+		//if(ans!=ret) System.err.println("====================오류========================");
+		//System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
+	}
 	public static void main(String[] args) throws Exception
 	{
 		Long start = System.currentTimeMillis();

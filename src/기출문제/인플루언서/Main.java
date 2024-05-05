@@ -159,10 +159,7 @@ public class Main
 
 	private static BufferedReader br;
 	
-	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret) System.err.println("====================오류========================");
-		System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
-	}
+	
 	private static boolean run() throws Exception
 	{
 		StringTokenizer st;
@@ -233,7 +230,10 @@ public class Main
 
 		return isCorrect;
 	}
-
+	static void print(int q, String cmd, int ans, int ret, Object...o) {
+		//if(ans!=ret) System.err.println("====================오류========================");
+		//System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
+	}
 	public static void main(String[] args) throws Exception
 	{
 		Long start = System.currentTimeMillis();

@@ -15,10 +15,6 @@ class UserSolution {
 	final int[] P_POWER = {10, 5, 3, 2};
 	
 	int N;
-	
-	int[] parent;
-	//int[] sumPowerByGroup;
-	
 	TreeMap<Member, Integer> influences;
 	
 	Member[] memberInfo;	
@@ -35,14 +31,10 @@ class UserSolution {
     	secondGroupByMember  = new HashSet[N];
     	thirdGroupByMember  = new HashSet[N];
     	memberInfo = new Member[N];
-    	parent =  new int[N];
-    	//sumPowerByGroup =  new int[N];
     	
     	influences = new TreeMap<>(ordered());
     	
     	for(int i=0; i<N; i++) {
-    		parent[i] = i;
-    		//sumPowerByGroup[i] = mPurchasingPower[i];
     		memberByGroup[i] = new ArrayList<>(Arrays.asList(i));
     		firstGroupByMember[i] = new ArrayList<>();
     		secondGroupByMember[i] = new HashSet<>();
@@ -56,12 +48,6 @@ class UserSolution {
     	for(int i=0; i<M; i++) {
     		firstGroupByMember[mFriend1[i]].add(mFriend2[i]);
     		firstGroupByMember[mFriend2[i]].add(mFriend1[i]);
-    		/*
-    		if(friendsByMember[mFriend1[i]].size() < friendsByMember[mFriend2[i]].size()) {
-    			union(mFriend2[i], mFriend1[i]);    			
-    		} else {
-    			union(mFriend1[i], mFriend2[i]);
-    		}*/
     	}
     	
     	for(int i=0; i<N; i++) {
@@ -80,24 +66,38 @@ class UserSolution {
 		int sum0 = member.pPower;
 		int sum1 = 0;
 		int sum2 = 0;
-		int sum3 = 0;
+		int sum3 = 0;		
 		
-		
+		HashSet<Integer> thirdSet = new HashSet<>();		
 		for(int first : firstGroupByMember[id]) {
 			if(used[first] == 1) continue;
-			sum1 += memberInfo[first].pPower;
-			
+			sum1 += memberInfo[first].pPower;			
 			used[first] = 1;
 			for(int second : firstGroupByMember[first]) {
 				if(firstGroupByMember[id].contains(second)) continue;
+				if(thirdGroupByMember[id].contains(second)) {
+					thirdGroupByMember[id].remove(second);
+					used[second] = 0;
+				}
 				if(used[second] == 1) continue;
 				sum2 += memberInfo[second].pPower;
 				used[second] = 1;
 				secondGroupByMember[id].add(second);
-				
+			}
+		}
+		
+		for(int third : thirdSet) {
+			if(used[third] == 1) continue;
+			sum3 += memberInfo[third].pPower;
+			used[third] = 1;
+			thirdGroupByMember[id].add(third);
+		}
+		
+	
+		for(int first : firstGroupByMember[id]) {
+			for(int second : firstGroupByMember[first]) {
 				for(int third : firstGroupByMember[second]) {
 					if(firstGroupByMember[id].contains(third)) continue;
-					//if(firstGroupByMember[first].contains(third)) continue;
 					if(secondGroupByMember[id].contains(third)) continue;
 					if(used[third] == 1) continue;
 					sum3 += memberInfo[third].pPower;
@@ -116,29 +116,10 @@ class UserSolution {
 		influences.put(member, totalPower);
 		
 		return;
-	}
-	
-	
-	
+	}	
 	
 	private Comparator<? super Member> ordered() {
 		return (o1, o2) -> o1.totalPower == o2.totalPower ? Integer.compare(o1.id, o2.id) : Integer.compare(o2.totalPower, o1.totalPower);
-	}
-	
-	int find(int a) {
-		if(a==parent[a]) return a;
-		return find(parent[a]);
-	}
-	
-	void union(int a, int b) {
-		int pa = find(a);
-		int pb = find(b);
-		
-		if(pa == pb) return;
-		
-		parent[pb] = pa;
-		memberByGroup[pa].addAll(memberByGroup[pb]); 
-		//sumPowerByGroup[pa] += sumPowerByGroup[pb];
 	}
 	
 	
@@ -177,49 +158,9 @@ class UserSolution {
 		HashSet<Integer> target = new HashSet<>();
 		target.add(mID1);
 		target.add(mID2);
-		
-		
-		
-		if(secondGroupByMember[mID1].contains(mID2)) {			
-			for(int third : thirdGroupByMember[mID1]) {
-				if(firstGroupByMember[mID2].contains(third)) {
-					thirdGroupByMember[mID1].remove(third);
-					thirdGroupByMember[third].remove(mID1);
-					secondGroupByMember[mID1].add(third);
-					secondGroupByMember[third].add(mID1);
-				}
-			}
-			/*
-			for(int third : secondGroupByMember[mID2]) {				
-				if(firstGroupByMember[mID1].contains(third)) {
-					thirdGroupByMember[mID2].remove(third);
-					thirdGroupByMember[third].remove(mID2);
-				}
-			}*/
-			secondGroupByMember[mID1].remove(mID2);
-			secondGroupByMember[mID2].remove(mID1);					
-		}
-
-		if(thirdGroupByMember[mID1].contains(mID2)) {			
-			thirdGroupByMember[mID1].remove(mID2);
-			thirdGroupByMember[mID2].remove(mID1);
-		}
-		
-		
-		
-		
-		/*
-		thirdGroupByMember[mID1].addAll(secondGroupByMember[mID2]);
-		secondGroupByMember[mID1].addAll(firstGroupByMember[mID2]);				
-		thirdGroupByMember[mID2].addAll(secondGroupByMember[mID1]);
-		secondGroupByMember[mID2].addAll(firstGroupByMember[mID1]);			
-		 */		
-		
-		//for(int fist)
-		
+	
 		firstGroupByMember[mID1].add(mID2);
-		firstGroupByMember[mID2].add(mID1);
-		
+		firstGroupByMember[mID2].add(mID1);		
 		
 		target.addAll(thirdGroupByMember[mID1]);
 		target.addAll(thirdGroupByMember[mID2]);
@@ -228,6 +169,10 @@ class UserSolution {
 		target.addAll(firstGroupByMember[mID1]);
 		target.addAll(firstGroupByMember[mID2]);
 		
+		for(int t : target) {		
+			secondGroupByMember[t] = new HashSet<>();
+			thirdGroupByMember[t] = new HashSet<>();
+		}
 		
 		for(int id : target) {
 			setRelation(id);
@@ -269,8 +214,6 @@ class UserSolution {
 		return;
 	}
 	
-	
-	
 	class Member {
 		int id;
 		int pPower;
@@ -282,8 +225,6 @@ class UserSolution {
 			this.totalPower = totalPower;
 		}
 	}
-	
-	
 }	
 
 
@@ -375,15 +316,15 @@ public class Main
 	}
 	
 	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret) System.err.println("====================오류========================");
-		System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
+		//if(ans!=ret) System.err.println("====================오류========================");
+		//System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
 	}
 	public static void main(String[] args) throws Exception
 	{
 		Long start = System.currentTimeMillis();
 		int TC, MARK;
 
-		System.setIn(new java.io.FileInputStream("C://sw certi//workspace//swcerti//src//기출문제//인플루언서//sample_input3.txt"));
+		System.setIn(new java.io.FileInputStream("C://sw certi//workspace//swcerti//src//기출문제//인플루언서//sample_input.txt"));
 		br = new BufferedReader(new InputStreamReader(System.in));
 
 		StringTokenizer st = new StringTokenizer(br.readLine(), " ");

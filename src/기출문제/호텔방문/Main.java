@@ -25,15 +25,15 @@ class UserSolution {
 		this.N = N;
 		parent = new int[MAX_BRAND];
 		countByBrand = new int[MAX_BRAND];
-		hotelByBrand = new int[MAX_BRAND];
+		hotelByBrand = new int[N];
 		
-		graph = new ArrayList[N+1];
-		for(int i=0; i<N+1; i++) {
+		graph = new ArrayList[N];
+		for(int i=0; i<N; i++) {
 			graph[i] = new ArrayList<>();
+			hotelByBrand[i] = mBrands[i];
 		}
 		
-		for(int i=0; i<N; i++) {
-			hotelByBrand[i] = mBrands[i];
+		for(int i=0; i<MAX_BRAND; i++) {
 			parent[i] = i;
 			countByBrand[mBrands[i]] += 1;
 		}
@@ -71,20 +71,24 @@ class UserSolution {
 
 	int move(int mStart, int mBrandA, int mBrandB) {
 		int totalDistance = 0;
-		if(mBrandA == mBrandB) {
-			TreeSet<Integer> result = dijkstra(mStart, mBrandA);
-			totalDistance = result.pollFirst() + result.pollFirst();
-		} else {
-			TreeSet<Integer> result1 = dijkstra(mStart, mBrandA);
-			TreeSet<Integer> result2 = dijkstra(mStart, mBrandB);
-			totalDistance = result1.pollFirst() + result2.pollFirst();			
+		int pBrandA = find(mBrandA);
+		int pBrandB = find(mBrandB);
+	
+		if(pBrandA == pBrandB) {
+			for(int i=0; i<N; i++) {
+				if(find(hotelByBrand[i]) == pBrandA) {
+					
+				}
+			}
 		}
+		int brandA = find(mBrandA);
+		int brandB = find(mBrandB);
 		
 		return totalDistance;
 	}
 	
-	TreeSet<Integer> dijkstra(int start, int targetBrand) {
-		TreeSet<Integer> result = new TreeSet<>();
+	int dijkstra(int start, int target) {
+		
 		
 		int[] dist = new int[N+1];
 		Arrays.fill(dist, Integer.MAX_VALUE);
@@ -95,19 +99,18 @@ class UserSolution {
 		
 		while(!q.isEmpty()) {
 			Node cur = q.poll();
-			if(find(hotelByBrand[cur.id]) == targetBrand) {
-				result.add(cur.distance);
-				continue;
+			if(cur.id == target) {
+				return dist[cur.id];
 			}
 			for(Node next : graph[cur.id]) {
-				int nextDistance = cur.distance + next.distance;
+				int nextDistance = cur.distance + next.distance;				
 				if(dist[next.id] <= nextDistance) continue;
 				dist[next.id] = nextDistance;
 				q.add(new Node(next.id, dist[next.id]));
 			}
 		}
 		
-		return result;
+		return -1;
 	}
 	
 	class Node {

@@ -1,0 +1,44 @@
+1 100
+42
+0
+1 1 appletmango 4 3 2
+1 2 bcyaerrkang 2 3 4
+1 3 efkabcdappl 2 3 4
+1 4 applerryabc 2 3 2
+1 5 applefgappl 2 3 4
+1 6 nggoerrerer 2 3 2
+2 appletmango
+3 0 5
+3 0 0
+3 2 4
+3 1 2
+3 0 4
+4 applerryabc gogoaurappl 2 3 4
+3 0 1
+3 2 4
+4 applefgappl efgaaurappl 4 3 2
+3 2 1
+3 0 5
+1 7 plaaqwrtble 2 3 4
+1 8 baswerrefka 4 3 4
+1 9 kangqwrbcya 4 3 4
+3 2 7
+3 1 9
+3 0 2
+3 1 8
+2 nggoerrerer
+3 0 2
+3 2 9
+3 2 2
+3 2 9
+3 1 7
+3 0 5
+3 1 4
+4 gogoaurappl plaaerruhbz 2 3 2
+3 1 8
+3 2 3
+3 2 1
+3 0 5
+3 1 0
+3 2 4
+3 0 5

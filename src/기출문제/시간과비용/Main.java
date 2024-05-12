@@ -3,12 +3,14 @@ package 기출문제.시간과비용;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 class UserSolution {
+	int MAX_NODE = 101;
 	int N, K;
 	
 	ArrayList<Node>[] graph;
@@ -35,39 +37,48 @@ class UserSolution {
 	}
 	 
 	public int cost(int M, int sCity, int eCity) {
-	    int[][] dist = new int[N+1][2];
-	    for(int i=0; i<N+1; i++) {
-	    	dist[i][1] = Integer.MAX_VALUE;	    	
-	    }
-	    
-	    PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.time, o2.time));
-	    q.add(new Node(sCity, 0, 0));
-	    dist[sCity][0] = 0;
-	    dist[sCity][1] = 0;
-	    
-	    while(!q.isEmpty()) {
-	    	Node cur = q.poll();
-	    	
-	    	if(cur.id == eCity) {
-	    		return dist[cur.id][1];
-	    	}
-	    	
-	    	for(Node next : graph[cur.id]) {
-	    		int nextTime = next.time + cur.time;
-	    		if(dist[next.id][1] <= nextTime) continue;
-	    		
-	    		int nextCost = next.cost + cur.cost;
-	    		if(nextCost > M) continue;
-	    		
-	    		dist[next.id][0] = nextCost;
-	    		dist[next.id][1] = nextTime;	    		
-	    		q.add(new Node(next.id, dist[next.id][0], dist[next.id][1]));
-	    		
-	    	}
-	    }
-	    
-	    return -1;
+	   
+		int start = 1;
+		int end = 10000;
+		
+		while(start <= end) {
+			int mid = (start + end) / 2;
+			if(bfs(mid, sCity, eCity, M)) 
+				end = mid - 1;
+			else 				
+				start = mid + 1;	
+			
+		}
+		
+		
+		return end == 10000 ? -1 : end + 1;
+		
+		
 	}
+	
+	boolean bfs(int timeLimit, int start, int end, int cost) {
+		int[] visited = new int[N];
+		
+		ArrayDeque<Node> q = new ArrayDeque<>();
+		q.add(new Node(start, cost, 0));
+		while(!q.isEmpty()) {
+			Node cur = q.poll();
+			if(cur.id == end) 
+				return true;
+			for(Node next : graph[cur.id]) {
+				int nextCost = cur.cost - next.cost;
+				if(nextCost < 0) continue;
+				int nextTime = cur.time + next.time;
+				if(nextTime > timeLimit) continue;
+				
+				q.add(new Node(next.id, nextCost, nextTime));
+			}
+		}
+		
+		
+		return false;
+	}
+	
 	
 	class Node {
 		int id;
@@ -78,20 +89,6 @@ class UserSolution {
 			this.cost = cost;
 			this.time = time;
 		}
-	}
-	
-	class  Line {
-		int from;
-		int to;
-		int cost;
-		int time;
-		public Line(int from, int to, int cost, int time) {			
-			this.from = from;
-			this.to = to;
-			this.cost = cost;
-			this.time = time;
-		}
-		
 	}
 }
 
@@ -170,12 +167,12 @@ public class Main {
 		return okay;
 	}
 	static void print(int q, String cmd, int ans, int ret, Object... o) {
-		if(ans != ret)	 System.err.println("---------------------오류------------------------");
-		System.out.println("["+q+"] " + cmd + " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
+		//if(ans != ret)	 System.err.println("---------------------오류------------------------");
+		//System.out.println("["+q+"] " + cmd + " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
 	}
 	public static void main(String[] args) throws Exception {
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\시간과비용\\sample_input2.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\시간과비용\\sample_input.txt"));
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");

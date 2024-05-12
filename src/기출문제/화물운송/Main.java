@@ -10,19 +10,17 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 class UserSolution {
-	final int MAX_LIMIT = 30_000;
+	final int MAX_LIMIT = 30_001;
 	int N, K;
 	
 	ArrayList<Node>[] graph;
-	ArrayList<Node>[] graph2;
 	
 	public void init(int N, int K, int[] sCity, int[] eCity, int[] mLimit) {
 		this.N = N;
 		this.K = K;
 		
-		graph = new ArrayList[N+1];
-		//graph2 = new ArrayList[N+1];
-		for(int i=0; i<N+1; i++) {
+		graph = new ArrayList[N];
+		for(int i=0; i<N; i++) {
 			graph[i] = new ArrayList<>();
 		}
 		
@@ -32,93 +30,43 @@ class UserSolution {
 		return;
 	}
 	
-	
-	
-
 	public void add(int sCity, int eCity, int mLimit) {
 		graph[sCity].add(new Node(eCity, mLimit));
 		return; 
 	}
 
 	public int calculate(int sCity, int eCity) {
-		return dijkstra(sCity, eCity); 
-		//return bfs(sCity, eCity);
-		
-		
-		
-		//return -1;
+		return bfs(sCity, eCity); 
 	}
 	
 	int bfs(int start, int end) {
 		int[] visited = new int[N];
-		//Arrays.fill(visited, Integer.MAX_VALUE);
-		visited[start]  = 1;
+		Arrays.fill(visited, -1);
+		
 		ArrayDeque<Node> q = new ArrayDeque<>();
-		q.add(new Node(start, Integer.MAX_VALUE));
-		
-		int max = -1;
+		q.add(new Node(start, MAX_LIMIT));
+	
 		while(!q.isEmpty()) {
-			Node cur = q.poll();
-			
-			if(cur.id == end) {
-				max = Math.max(cur.limit, max);
-				continue;
-			}
-			
+			Node cur = q.poll();			
 			for(Node next : graph[cur.id]) {
-				//if(next.id == start) continue;
-				if(visited[next.id] == 1) continue; 
-				int limit = Math.min(cur.limit, next.limit);
-				q.add(new Node(next.id, limit));
-				visited[next.id] = 1;
+				int min = Math.min(cur.limit, next.limit);
+				if(visited[next.id] >= min) continue; 
+				
+				q.add(new Node(next.id, min));
+				visited[next.id] = min;
 			}
 		}
 		
-		return max;		
+		return visited[end];
 		
 	}
-	
-	int dijkstra(int start, int end) {
-		int[] dist = new int[N+1];
-		Arrays.fill(dist, Integer.MAX_VALUE);
-		
-		PriorityQueue<Node> q = new PriorityQueue<Node>((o1, o2) -> Integer.compare(o1.reversedLimit, o2.reversedLimit));
-		//q.add(new Node(start, MAX_LIMIT));
-		dist[start] = 0;
-		
-		for(Node next : graph[start]) {
-			q.add(new Node(next.id, next.limit));
-		}
-		
-		while(!q.isEmpty()) {
-			Node cur = q.poll();
-			if(cur.id == end) {
-				return dist[cur.id];
-			}
-			
-			for(Node next : graph[cur.id]) {
-				if(dist[next.id] <= cur.limit) continue;
-				dist[next.id] = Math.min(next.limit, dist[next.id]);
-				q.add(new Node(next.id, dist[next.id]));
-				
-			}
-				
-		}
-		
-		
-		
-		return -1;
-	}
-	
 	
 	class Node {
 		int id;		
 		int limit;
-		int reversedLimit;
 		public Node(int id, int limit) {		
 			this.id = id;
 			this.limit = limit;
-			this.reversedLimit = MAX_LIMIT - this.limit;
 		}
 	}
 }
@@ -190,12 +138,12 @@ public class Main {
 	}
 
 	static void print(int q, String cmd, int ans, int ret, Object... o) {
-		if(ans != ret)	 System.err.println("---------------------오류------------------------");
-		System.out.println("["+q+"] " + cmd + " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
+		//if(ans != ret)	 System.err.println("---------------------오류------------------------");
+		//System.out.println("["+q+"] " + cmd + " " + ans + "=" + ret + " [" + Arrays.deepToString(o) + "]" );
 	}
 	public static void main(String[] args) throws Exception {
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\화물운송\\sample_input2.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\화물운송\\sample_input.txt"));
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");

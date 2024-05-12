@@ -6,11 +6,13 @@ import java.util.*;
 
 class UserSolution {
 	
-	final int SUMMARY_UNIT = 1000;;
+	final int SUMMARY_UNIT = 100;
 	
 	int N;
 	ArrayList<Tower>[][][] sMap;
 	int[][] removed;
+	
+	int[] countByColor;
 	
 	int sSize;
 	
@@ -30,6 +32,7 @@ class UserSolution {
 		}
 		
 		removed = new int[N+1][N+1];
+		countByColor = new int[6];
 		
 		return;
 	}
@@ -44,6 +47,10 @@ class UserSolution {
 		
 		sMap[sy][sx][mColor].add(tower);
 		
+		countByColor[0]++;
+		countByColor[mColor]++;
+		
+		
 		return; 
 	}
 	
@@ -52,25 +59,115 @@ class UserSolution {
 	}
 	
 	public int countTower(int mRow, int mCol, int mColor, int mDis) {
+		int count = 0;
+		
 		int y = mRow / SUMMARY_UNIT;
 		int x = mCol / SUMMARY_UNIT;
 		
-		int yDis1 = mRow - mDis / SUMMARY_UNIT;
-		int yDis2 = mRow + mDis / SUMMARY_UNIT;
+		int yDis1 = (mRow - mDis) / SUMMARY_UNIT;
+		int yDis2 = (mRow + mDis) / SUMMARY_UNIT;
 		
-		int xDis = Math.abs(mCol - mDis) / SUMMARY_UNIT;
+		int xDis1 = (mCol - mDis) / SUMMARY_UNIT;
+		int xDis2 = (mCol + mDis) / SUMMARY_UNIT;
 		
 		int startRow = yDis1 == y ? y  : Math.max(0, yDis1);		
 		int endRow =  yDis2 == y ? y  : Math.min(sSize - 1, yDis2);
 		
+		int startCol = xDis1 == x ? x  : Math.max(0, xDis1);		
+		int endCol =  xDis2 == x ? x  : Math.min(sSize - 1, xDis2);		
+		
+	
+		int startColor = mColor;
+		int endColor = mColor;
+		if(mColor == 0) {
+			startColor = 1;
+			endColor = 5;
+		}
+		
+		//System.out.println("startRow : " + startRow + ", endRow : " + endRow + " , startCol : " + startCol + ", endCol : " + endCol);
+		
+		int y1 = Math.max(0, mRow - mDis);
+		int y2 = Math.min(N, mRow + mDis);
+		
+		int x1 = Math.max(0, mCol - mDis);
+		int x2 = Math.min(N, mCol + mDis);
 		
 		
-		return 0; 
+		for(int i=startRow; i<=endRow; i++) {
+			for(int j=startCol; j<=endCol; j++) {				
+				for(int k=startColor; k<=endColor; k++) {
+					for(Tower tower : sMap[i][j][k]) {
+						if(removed[tower.row][tower.col] == 1) continue;
+						if(tower.row < y1 || tower.col < x1 || tower.row > y2 || tower.col > x2)  continue;
+						count++;
+					}
+				}
+				
+			}
+		}
+		
+		return count;
 	}
 
 	public int getClosest(int mRow, int mCol, int mColor) {
-		return 0; 
+		
+		int y = mRow / SUMMARY_UNIT;
+		int x = mCol / SUMMARY_UNIT;
+		
+		if(countByColor[mColor] == 0) return -1;
+		
+		int startColor = mColor;
+		int endColor = mColor;
+		if(mColor == 0) {
+			startColor = 1;
+			endColor = 5;
+		}
+		
+		int[][] used = new int[sSize][sSize];
+		
+		int sDis = sSize > 2 ? 2 : 1;
+		int min = Integer.MAX_VALUE;
+		while(sDis <= sSize) {
+			
+			int startRow = Math.max(0, y - sDis);		
+			int endRow = Math.min(sSize - 1, y + sDis);
+			
+			int startCol = Math.max(0, x - sDis);		
+			int endCol = Math.min(sSize - 1, x + sDis);		
+			
+
+			for(int i=startRow; i<=endRow; i++) {
+				for(int j=startCol; j<=endCol; j++) {
+					if(used[i][j] == 1) continue;
+					for(int k=startColor; k<=endColor; k++) {
+						for(Tower tower : sMap[i][j][k]) {
+							if(removed[tower.row][tower.col] == 1) continue;
+							int dis = Math.abs(tower.row - mRow) + Math.abs(tower.col - mCol);
+							min = Math.min(dis, min);
+						}
+					}
+					used[i][j] = 1;
+				}
+			}
+			if(min != Integer.MAX_VALUE) return min;
+			
+			
+			sDis++;
+		}
+		
+		
+		return min; 
 	}
+	
+	boolean binarySearch(int dis, int row, int col, int color) {
+		
+		
+		
+		
+		return false;
+	}
+	
+	
 	
 	class Tower {
 		int row;
@@ -102,7 +199,8 @@ public class Main {
 		boolean okay = false; 
 		
 		st = new StringTokenizer(br.readLine(), " ");
-		Q = Integer.parseInt(st.nextToken());
+		//Q = Integer.parseInt(st.nextToken());
+		Q = 2000;
 
 		for (int q = 0; q < Q; ++q) {
 
@@ -122,14 +220,14 @@ public class Main {
 				col = Integer.parseInt(st.nextToken());
 				color = Integer.parseInt(st.nextToken());
 				userSolution.buildTower(row, col, color);
-				print(q, "buildTower", q, q, row, col, color);
+				//print(q, "buildTower", q, q, row, col, color);
 				break;
 				
 			case CMD_REMOVE:
 				row = Integer.parseInt(st.nextToken());
 				col = Integer.parseInt(st.nextToken());
 				userSolution.removeTower(row, col); 
-				print(q, "removeTower", q, q, row, col);
+				//print(q, "removeTower", q, q, row, col);
 				break;
 				
 			case CMD_COUNT:
@@ -139,7 +237,7 @@ public class Main {
 				dis = Integer.parseInt(st.nextToken());
 				ret = userSolution.countTower(row, col, color, dis); 
 				ans = Integer.parseInt(st.nextToken());
-				print(q, "countTower", ans, ret, row, col, color, dis);
+				//print(q, "countTower", ans, ret, row, col, color, dis);
 				if(ret != ans)
 					okay = false; 
 				break;
@@ -164,13 +262,13 @@ public class Main {
 	}
 	
 	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		//if(ans!=ret)  System.err.println("----------------------오류--------------------");
-		//System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
+		if(ans!=ret)  System.err.println("----------------------오류--------------------");
+		System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
 	}
 	public static void main(String[] args) throws Exception {
 		// System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\감시탑\\sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\감시탑\\sample_input3.txt"));
 
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

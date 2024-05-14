@@ -45,7 +45,7 @@ class UserSolution {
 	static int[] ydir = {-1, 1, 0, 0};
 	static int[] xdir = {0, 0, -1, 1}; 
 	
-	static Main.Main_dijkstra breed(int y, int x, Main_dijkstra.Bacteria bac, int t) {
+	static 프로원정대.day2.마법사의사냥.Main_dijkstra breed(int y, int x, Main_dijkstra.Bacteria bac, int t) {
 		
 		Main_dijkstra.Result ret = new Main_dijkstra.Result(); 
 		
@@ -105,7 +105,7 @@ class UserSolution {
     	return; 
     }
 
-    public Main.Main_dijkstra putBacteria(int mTime, int mRow, int mCol, Main_dijkstra.Bacteria mBac) {
+    public 프로원정대.day2.마법사의사냥.Main_dijkstra putBacteria(int mTime, int mRow, int mCol, Main_dijkstra.Bacteria mBac) {
     	Main_dijkstra.Result ret = new Main_dijkstra.Result(); 	
     	
     	// 만약 무언가 존재하는 공간이라면 -> 그냥 (0,0) 태초상태의 ret을 return

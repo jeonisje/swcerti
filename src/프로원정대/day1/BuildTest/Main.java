@@ -1,4 +1,4 @@
-package 프로원정대.BuildTest;
+package 프로원정대.day1.BuildTest;
 
 import java.io.BufferedReader;
 import java.io.IOException;

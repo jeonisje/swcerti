@@ -1,4 +1,5 @@
-package 기출문제.광물합성;
+package 기출문제.광물합성._01;
+
 
 
 import java.io.BufferedReader;
@@ -11,31 +12,31 @@ import java.util.TreeMap;
 
 class UserSolution {
 	final int MAX_ID = 4_000;
+	final int SUMMARY_UNIT = 1_000;
+	final int MAX_COST = 100_000;
 	
 	int shipFee;	
 	int id;
 	int[] removed;
-	
-	ArrayList<Material> [] materialInfo;	
-	TreeMap<Material, Integer> map;	
-	TreeMap<MaterialCombi, Integer> combiMap;
-	Material[] materialInfo2;
-	
 	int[][] countByType;
+	
+	TreeMap<Integer, Integer>[][] combiMap; // 광물 0, 1
+	TreeMap<Integer, Integer>[][] mat2Map;  // 광물 2	
+	
+	Material[] materialInfo;
+	
+	int sSize;
   
 	public void init(int mShipFee) {		
 		this.shipFee =  mShipFee;
 		
 		countByType = new int[2][3];
 		id = 0;
-		removed = new int[MAX_ID];		
-		materialInfo = new 	ArrayList[2];
-		materialInfo2 = new Material[MAX_ID];
-		map = new TreeMap<>((o1, o2) -> o1.cost == o2.cost ? Integer.compare(o2.content, o1.content) : Integer.compare(o1.content, o2.content));
-		combiMap = new TreeMap<>((o1, o2) -> o1.cost == o2.cost ? Integer.compare(o2.content, o1.content) : Integer.compare(o1.content, o2.content));			
-		for(int i=0; i<2; i++) {
-			materialInfo[i] = new ArrayList<>();
-		}		
+		removed = new int[MAX_ID];
+		sSize = MAX_COST / SUMMARY_UNIT;
+		
+		
+		
 	}
 	 
 	public int gather(int mMineId, int mType, int mCost, int mContent) {		

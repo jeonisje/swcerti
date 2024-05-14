@@ -1,4 +1,4 @@
-package 프로원정대.사원출입관리시스템;
+package 프로원정대.day1.사원출입관리시스템;
 
 
 import java.io.BufferedReader;

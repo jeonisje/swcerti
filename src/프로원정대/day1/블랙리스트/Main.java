@@ -1,4 +1,4 @@
-package 프로원정대.블랙리스트;
+package 프로원정대.day1.블랙리스트;
 
 import java.io.BufferedReader;
 import java.io.IOException;

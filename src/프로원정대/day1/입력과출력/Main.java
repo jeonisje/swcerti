@@ -1,4 +1,4 @@
-package 프로원정대.입력과출력;
+package 프로원정대.day1.입력과출력;
 
 import java.io.BufferedReader;
 import java.io.IOException;

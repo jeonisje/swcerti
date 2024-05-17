@@ -6,42 +6,50 @@ import java.io.*;
 import java.util.*;
 
 class UserSolution {
+	int MAX = 80000;
 	int H, W;
 	
 	ArrayList<Character> list;
 	int[] countByChar;
 	int current;
+	int lastCursor;
+	char[] cList;
+	int length;
 	
-	ArrayList<Integer>[] locationByChar;
-  
 	void init(int H, int W, char mStr[]) {
 		this.H = H;
 		this.W = W;
-		
 		list = new ArrayList<>();
 		countByChar = new int[200];	
-		locationByChar = new ArrayList[200];
-		
-		for(int i=0; i<200; i++) {
-			locationByChar[i] = new ArrayList<>();
-		}
+		//cList = new char[MAX];
+		length = 0;
 		
 		for(int i=0; i<mStr.length - 1 ; i++) {
 			if(mStr[i] == '\0') break;
 			char c = mStr[i];
 			list.add(c);
 			countByChar[c]++;
-			locationByChar[c].add(i);
+			//cList[i] = c;
+			length++;
+			//locationByChar[c].add(i);
 		}
 		
 		current = 0;
+		lastCursor = 0;
 		return; 
 	}
 	
 	void insert(char mChar) {	
 		countByChar[mChar]++;
-		list.add(current, mChar);
+		list.add(current, mChar);		
 		current++;
+		
+		/*
+		cList = new char[MAX];
+		for(int i=0; i<list.size(); i++) {
+			cList[i] = list.get(i);
+		}*/
+		
 		return; 
 	}
 
@@ -58,85 +66,37 @@ class UserSolution {
 		return list.get(current);		
 	}
 
-	int countCharacter(char mChar) {
-		int[] dat = new int[200];
-		
+	int countCharacter(char mChar) {		
 		if(current == 0) return countByChar[mChar];
 		if(current == list.size()) return 0;
 		
-		if(current >= list.size() / 2) {
-			for(int i=current; i<list.size(); i++) {
-				dat[list.get(i)]++;
-			}
-			return dat[mChar]; 
+		
+		
+		
+		if(current >= list.size() / 2) {			
+			return countChar(current, list.size(), mChar); 
 		} else {
-			for(int i=0; i<current; i++) {
-				dat[list.get(i)]++;
-			}
-			
-			return countByChar[mChar] - dat[mChar];
+			int count = countChar(0, current, mChar); 
+			return countByChar[mChar] - count;
 		}
-		
-		
+	}
+	
+	int countChar(int start, int end, char mChar) {
+		int[] dat = new int[200];
 		/*
-		
-		if(list.size() < 50000) {
-			
-			if(current >= list.size() / 2) {
-				for(int i=current; i<list.size(); i++) {
-					dat[list.get(i)]++;
-				}
-				return dat[mChar]; 
-			} else {
-				for(int i=0; i<current; i++) {
-					dat[list.get(i)]++;
-				}
-				
-				return countByChar[mChar] - dat[mChar];
-			}
-		}
-		
-		int start = ((int)(current/10000) + 1);
-		int end = (int)(list.size() / 10000);
-		int diff = end - start;
-		//System.out.println(current + ", " + start + ", list.size() => " + list.size() + ", end_10000 => " + end + ", diff => " + diff);
-		// 10000 단위 유닛으로..		
-		
-		if(diff < 2) {
-			for(int i=current; i<list.size(); i++) {
-				dat[list.get(i)]++;
-			}
-			return dat[mChar]; 
-		}
-		
-		int start_10000 = start * 10000;/*
-		for(int i=0; i < start_10000 + 9999; i++) {
+		int diff = (end - start) / 2 + 1;
+		for(int i=start; i<start + diff; i++) {
 			dat[list.get(i)]++;
-			switch (diff) {
-				case 6:
-					dat[list.get(i + 50000)]++;				
-				case 5:
-					dat[list.get(i + 40000)]++;
-				case 4:
-					dat[list.get(i + 30000)]++;
-				case 3:
-					dat[list.get(i + 20000)]++;
-				case 2:
-					dat[list.get(i + 10000)]++;
-					break;
-				default:
-					break;
-			}			
+			if(i+diff >= end) continue;
+			dat[list.get(i+diff)]++;
 		}
-		for(int i=current; i<start_10000; i++) {
-			dat[list.get(i)]++;
-		}
-		for(int i=end * 10000; i<list.size(); i++) {
-			dat[list.get(i)]++;
+		*/
+		int count = 0;
+		for(int i=start; i<end; i++) {
+			count++;
 		}
 		
-		
-		return dat[mChar];*/
+		return dat[mChar];
 	}
 }
 
@@ -232,7 +192,7 @@ public class Main
 	{
 		long start = System.currentTimeMillis();
 		int TC, MARK;
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\메모장프로그램\\sample_input3.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\메모장프로그램\\sample_input.txt"));
 		//System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

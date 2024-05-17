@@ -17,7 +17,7 @@ class UserSolution {
 	public void init(int N, int[] mPopulation) {
 		this.N = N;
 		cityInfo = new City[N];
-		treeMap = new TreeMap<>((o1, o2) -> o1.moveTime == o2.moveTime ? Integer.compare(o1.id, o2.id) : Integer.compare(o1.moveTime, o2.moveTime));
+		treeMap = new TreeMap<>((o1, o2) -> o1.moveTime == o2.moveTime ? Integer.compare(o1.id, o2.id) : Integer.compare(o2.moveTime, o1.moveTime));
 		
 		for(int i=0; i<N; i++) {
 			City city = new City(i, mPopulation[i], mPopulation[i]);
@@ -30,17 +30,24 @@ class UserSolution {
 	 
 	public int expand(int M) {
 		int count = 0;
-		int sum = 0;
 		ArrayList<City> target = new ArrayList<>();
 		for(Map.Entry<City, Integer> entry : treeMap.entrySet()) {
-			
-			
-			
+			target.add(entry.getKey());
+			count++;
 			if(count == M) break;
 		}
 		
+
+		int sum = 0;
+		for(City city : target) {
+			int newTime = (int)Math.floor((double)city.moveTime / 2.0);
+			sum += newTime;
+			treeMap.remove(city);			
+			city.moveTime = newTime;
+			treeMap.put(city, newTime);
+		}
 		
-	    return 0;
+	    return sum;
 	}
 	 
 	public int calculate(int mFrom, int mTo) {
@@ -115,7 +122,7 @@ public class Main {
 				to = Integer.parseInt(st.nextToken());
 				ret = userSolution.calculate(from, to);  
 				ans = Integer.parseInt(st.nextToken());
-				print(q, "expand", ans, ret, from, to);
+				print(q, "calculate", ans, ret, from, to);
 				if(ret != ans)
 					okay = false; 
 				break;
@@ -126,7 +133,7 @@ public class Main {
 				num = Integer.parseInt(st.nextToken());
 				ret = userSolution.divide(from, to, num);  
 				ans = Integer.parseInt(st.nextToken());
-				print(q, "expand", ans, ret, from, to, num);
+				print(q, "divide", ans, ret, from, to, num);
 				if(ret != ans)
 					okay = false; 
 				break;

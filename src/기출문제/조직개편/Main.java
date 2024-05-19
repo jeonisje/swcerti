@@ -102,7 +102,7 @@ class UserSolution {
     	}
     	addChildNum(seq, -count);
     	totalCount -= count;
-    	
+    	 
         return count;
     }
 

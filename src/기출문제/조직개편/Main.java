@@ -15,7 +15,7 @@ class UserSolution {
 	Node[] nodes;
 	int rootId;
 	int[] childrenSumBySeq;
-	int[] numBySeq;
+	int[][] numBySeq;
 	int totalCount;
 	int totalNode;
   
@@ -33,21 +33,30 @@ class UserSolution {
         rootId = mId;
         
         nodes = new Node[MAX];
-        nodes[sequence] = new Node(sequence, mNum, sequence);
+        nodes[sequence] = new Node(sequence, mNum, sequence, 0);
         childrenSumBySeq = new int[MAX];
-        numBySeq = new int[MAX];
+        numBySeq = new int[MAX][3];
         
         totalCount = mNum;
         totalNode++;
         childrenSumBySeq[sequence] = mNum;
-        numBySeq[sequence] = mNum;
+        setNum(sequence, mNum, 0);
+        
+    }
+    
+    void setNum(int seq, int num, int type) {
+    	if(type == 0) {
+    		numBySeq[seq][0] = num;    		
+    	} else {
+    		numBySeq[seq][type] = numBySeq[seq][0] + num;
+    	}
     }
 
     public int add(int mId, int mNum, int mParent) {    
     	int pSeq = idToSeq.get(mParent);    	
-    
-    	if(graph[pSeq].size() <= 2)  {
-    		int ccount = 0;
+    	
+    	int ccount = 0;
+    	if(graph[pSeq].size() <= 2)  {    		
     		for(Node child : graph[pSeq]) {
     			if(removed[child.seq] == 0) ccount++;
     		}
@@ -55,17 +64,21 @@ class UserSolution {
     		if(ccount >= 2) return -1;
     	}
     	
+    	int dir = 1;
+    	if(ccount == 1 && graph[pSeq].get(0).dir == 1) dir = 2;
+    	
     	sequence++;
     	idToSeq.put(mId, sequence);
-    	Node node = new Node(sequence, mNum, pSeq);
+    	Node node = new Node(sequence, mNum, pSeq, dir);
     	graph[pSeq].add(node);
     	nodes[sequence] = node;    	
     	totalCount += mNum;    	
     
     	totalNode++;
     	childrenSumBySeq[sequence] = mNum;
-    	numBySeq[sequence] = mNum;
-    
+    	setNum(sequence, mNum, 0);
+    	setNum(pSeq, mNum, dir);
+    	
     	addChildNum(sequence, mNum);
         return childrenSumBySeq[pSeq];
     }
@@ -82,9 +95,11 @@ class UserSolution {
     }
 
     public int remove(int mId) {
-    	if(!idToSeq.containsKey(mId)) return -1;
+    	if(!idToSeq.containsKey(mId)) return -1;    	
     	int seq = idToSeq.get(mId);
-    	if(removed[seq] == 1) return -1;    	
+    	
+    	if(removed[seq] == 1) return -1;
+    	//if(isDeleted(seq)) return -1;
     	
     	ArrayDeque<Node> q = new ArrayDeque<>();
     	q.add(nodes[seq]);    	
@@ -102,8 +117,20 @@ class UserSolution {
     	}
     	addChildNum(seq, -count);
     	totalCount -= count;
+    	int dir = nodes[seq].dir;
+    	int pSeq = nodes[seq].pSeq;
+    	numBySeq[pSeq][dir] -= nodes[seq].count;
     	 
-        return count;
+      
+    	
+    	return childrenSumBySeq[seq];
+    	
+    }
+    
+    boolean isDeleted(int seq) {
+    	if(seq == 0) return false;
+    	if(removed[nodes[seq].pSeq] == 1) return true;
+    	return isDeleted(nodes[seq].pSeq);
     }
 
     public int reorganize(int M, int K) {
@@ -136,10 +163,12 @@ class UserSolution {
     	int seq;
     	int count;
     	int pSeq;
-		public Node(int seq, int count, int pSeq) {		
+    	int dir;	// 1 : left, 2:right
+		public Node(int seq, int count, int pSeq, int dir) {		
 			this.seq = seq;
 			this.count = count;
 			this.pSeq = pSeq;
+			this.dir = dir;
 		}
     }
 }

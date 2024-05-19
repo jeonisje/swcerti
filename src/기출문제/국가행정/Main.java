@@ -21,8 +21,12 @@ class UserSolution {
 		
 		for(int i=0; i<N; i++) {
 			City city = new City(i, mPopulation[i], mPopulation[i]);
-			treeMap.put(city, mPopulation[i]);
+			//treeMap.put(city, mPopulation[i]);
 			cityInfo[i] = city;
+			
+			if(i==0) continue;
+			cityInfo[i-1].moveTime += mPopulation[i];
+			treeMap.put(cityInfo[i-1], cityInfo[i-1].moveTime);
 		}
 		
 	    return;
@@ -38,34 +42,90 @@ class UserSolution {
 		}
 		
 
-		int sum = 0;
+		int newMoveTime = 0;
 		for(City city : target) {
-			int newTime = (int)Math.floor((double)city.moveTime / 2.0);
-			sum += newTime;
-			treeMap.remove(city);			
-			city.moveTime = newTime;
-			treeMap.put(city, newTime);
+			treeMap.remove(city);
+			city.lineCnt++;
+			int population = city.population + cityInfo[city.id + 1].population;
+			newMoveTime = (int)Math.floor((double)population / city.lineCnt);
+			city.moveTime = newMoveTime;
+			treeMap.put(city, newMoveTime);
+		}
+		
+	    return newMoveTime;
+	}
+	 
+	public int calculate(int mFrom, int mTo) {
+		int from = mFrom;
+		int to = mTo;
+		if(mFrom > mTo) {
+			from = mTo;
+			to = mFrom;
+		}
+		
+		int sum = 0;
+		for(int i=from; i<to; i++) {
+			sum += cityInfo[i].moveTime;
 		}
 		
 	    return sum;
 	}
 	 
-	public int calculate(int mFrom, int mTo) {
-	    return 0;
-	}
-	 
 	public int divide(int mFrom, int mTo, int K) {
-	    return 0;
+		int start = 1;
+		int end = 100000;
+		int population = 0;
+		while(start <= end) {
+			int mid = (start + end) / 2;
+			int ret = binarySearch(mid, K, mFrom, mTo);
+			if(ret != -1) {
+				start = mid + 1;
+				population = ret;
+			} else {
+				end = mid - 1;
+			}
+		}
+		
+	    return population;
+	}
+	
+	
+	int binarySearch(int target, int K, int from, int to) {
+		int idx = from;
+		int cnt = 0;
+		int maxPopulation = 0;
+		int tempPopulation = 0;
+		while(idx <= to ) {
+			if(cityInfo[idx].population >= target) {
+				cnt++;				
+				maxPopulation = Math.max(maxPopulation, cityInfo[idx].population);
+			} else {
+				if(tempPopulation + cityInfo[idx].population >= target) {
+					cnt++;					
+					maxPopulation = Math.max(maxPopulation, tempPopulation + cityInfo[idx].population);
+					tempPopulation = 0;
+				} else {
+					tempPopulation += cityInfo[idx].population;					
+				}
+			}
+			idx++;
+		}
+		
+		if(cnt < K) return -1;
+		
+		return maxPopulation;
 	}
 	
 	class City {
 		int id;
 		int population;
 		int moveTime;
+		int lineCnt;
 		public City(int id, int population, int moveTime) {		
 			this.id = id;
 			this.population = population;
 			this.moveTime = moveTime;
+			this.lineCnt = 1;
 		}
 	}
 }

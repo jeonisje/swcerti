@@ -43,7 +43,7 @@ class UserSolution {
 		}
 		int[] genderKeys = hashForGender(gender);
 		
-		Student student = new Student(mId,mScore);
+		Student student = new Student(mId,mGrade, gender, mScore);
 		studentInfo.put(mId, student);
 		
 		for(int i=0; i<gradeKeys.length; i++) {
@@ -108,14 +108,11 @@ class UserSolution {
 		int endKey = searchKey + MAX_SCORE;
 		
 		for(Map.Entry<Integer, TreeSet<Integer>> entry : searchMap.subMap(searchKey, endKey).entrySet() ) {
-			for(int id : entry.getValue()) {
-				int foundSeq = idToSeq.get(id);
-				 if(removed[foundSeq] == 1) continue;
-				 return id;
-			}
-			 
-		}
-					
+			for(int id : entry.getValue()) {				
+				if(removed.containsKey(id)) continue;
+				return id;
+			}			 
+		}					
 		
 		return 0;
 	}
@@ -148,8 +145,7 @@ class UserSolution {
 		
 		for(Entry<Integer, TreeSet<Integer>> entry : searchMap.subMap(startKey, endKey).entrySet()) {
 			for(int id :entry.getValue()) {
-				int seq = idToSeq.get(id);
-				if(removed[seq] == 1) continue;
+				if(removed.containsKey(id)) continue;
 				return id;
 			}
 		}
@@ -159,9 +155,13 @@ class UserSolution {
 	
 	class Student {
 		int id;
+		int grade;
+		int gender;
 		int score;
-		public Student(int id, int score) {		
+		public Student(int id, int grade, int gender, int score) {		
 			this.id = id;
+			this.grade = grade;
+			this.gender = gender;
 			this.score = score;
 		}
 	}

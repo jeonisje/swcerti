@@ -1,0 +1,30 @@
+1 100
+6
+100 CMD_INIT
+num_city: 5 num_road: 8
+from_city_id:  3  to_city_id:  0  time: 15
+from_city_id:  0  to_city_id:  2  time:  8
+from_city_id:  1  to_city_id:  3  time: 9
+from_city_id:  3  to_city_id:  4  time: 3
+from_city_id:  2  to_city_id:  1  time: 10
+from_city_id:  1  to_city_id:  2  time: 4
+from_city_id:  1  to_city_id:  4  time: 13
+from_city_id:  4  to_city_id:  2  time: 7
+300 CMD_DELIVER
+robot_position: 0 num_delivery: 3
+sender_city_id:  4  receiver_city_id:  2
+sender_city_id:  1  receiver_city_id:  3
+sender_city_id:  1  receiver_city_id:  4
+answer: 56
+200 CMD_ADD
+from_city_id:  0  to_city_id:  3  time: 5
+200 CMD_ADD
+from_city_id:  1  to_city_id:  0  time: 2
+200 CMD_ADD
+from_city_id:  3  to_city_id:  1  time: 6
+300 CMD_DELIVER
+robot_position: 0 num_delivery: 3
+sender_city_id:  4  receiver_city_id:  2
+sender_city_id:  1  receiver_city_id:  3
+sender_city_id:  1  receiver_city_id:  4
+answer: 41

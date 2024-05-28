@@ -1,0 +1,226 @@
+1 100
+50
+100 CMD_INIT
+num_city: 10  num_road: 11
+from_city_id: 00  to_city_id: 07  time: 042
+from_city_id: 04  to_city_id: 08  time: 063
+from_city_id: 01  to_city_id: 02  time: 076
+from_city_id: 07  to_city_id: 05  time: 005
+from_city_id: 08  to_city_id: 01  time: 054
+from_city_id: 05  to_city_id: 04  time: 011
+from_city_id: 02  to_city_id: 09  time: 008
+from_city_id: 06  to_city_id: 00  time: 057
+from_city_id: 09  to_city_id: 03  time: 046
+from_city_id: 03  to_city_id: 06  time: 055
+from_city_id: 05  to_city_id: 00  time: 054
+300 CMD_DELIVER
+robot_position: 5  num_delivery: 5
+sender_city_id: 03  receiver_city_id: 08
+sender_city_id: 07  receiver_city_id: 00
+sender_city_id: 05  receiver_city_id: 02
+sender_city_id: 09  receiver_city_id: 06
+sender_city_id: 07  receiver_city_id: 06
+answer: 1248
+300 CMD_DELIVER
+robot_position: 0  num_delivery: 6
+sender_city_id: 00  receiver_city_id: 01
+sender_city_id: 06  receiver_city_id: 07
+sender_city_id: 00  receiver_city_id: 05
+sender_city_id: 04  receiver_city_id: 05
+sender_city_id: 04  receiver_city_id: 03
+sender_city_id: 02  receiver_city_id: 01
+answer: 1527
+300 CMD_DELIVER
+robot_position: 5  num_delivery: 7
+sender_city_id: 01  receiver_city_id: 02
+sender_city_id: 05  receiver_city_id: 00
+sender_city_id: 03  receiver_city_id: 02
+sender_city_id: 07  receiver_city_id: 06
+sender_city_id: 03  receiver_city_id: 06
+sender_city_id: 01  receiver_city_id: 00
+sender_city_id: 03  receiver_city_id: 08
+answer: 2082
+200 CMD_ADD
+from_city_id: 08  to_city_id: 05  time: 017
+300 CMD_DELIVER
+robot_position: 6  num_delivery: 4
+sender_city_id: 06  receiver_city_id: 05
+sender_city_id: 00  receiver_city_id: 05
+sender_city_id: 06  receiver_city_id: 07
+sender_city_id: 02  receiver_city_id: 01
+answer: 1034
+200 CMD_ADD
+from_city_id: 07  to_city_id: 04  time: 036
+200 CMD_ADD
+from_city_id: 07  to_city_id: 06  time: 100
+200 CMD_ADD
+from_city_id: 03  to_city_id: 00  time: 046
+200 CMD_ADD
+from_city_id: 09  to_city_id: 00  time: 032
+200 CMD_ADD
+from_city_id: 09  to_city_id: 04  time: 002
+300 CMD_DELIVER
+robot_position: 5  num_delivery: 7
+sender_city_id: 05  receiver_city_id: 04
+sender_city_id: 03  receiver_city_id: 06
+sender_city_id: 05  receiver_city_id: 00
+sender_city_id: 09  receiver_city_id: 06
+sender_city_id: 07  receiver_city_id: 00
+sender_city_id: 03  receiver_city_id: 02
+sender_city_id: 01  receiver_city_id: 04
+answer: 1486
+200 CMD_ADD
+from_city_id: 04  to_city_id: 01  time: 027
+200 CMD_ADD
+from_city_id: 06  to_city_id: 03  time: 075
+200 CMD_ADD
+from_city_id: 00  to_city_id: 09  time: 045
+300 CMD_DELIVER
+robot_position: 4  num_delivery: 4
+sender_city_id: 08  receiver_city_id: 05
+sender_city_id: 00  receiver_city_id: 03
+sender_city_id: 06  receiver_city_id: 09
+sender_city_id: 00  receiver_city_id: 01
+answer: 488
+200 CMD_ADD
+from_city_id: 09  to_city_id: 08  time: 096
+200 CMD_ADD
+from_city_id: 09  to_city_id: 02  time: 002
+300 CMD_DELIVER
+robot_position: 1  num_delivery: 5
+sender_city_id: 05  receiver_city_id: 06
+sender_city_id: 03  receiver_city_id: 02
+sender_city_id: 05  receiver_city_id: 00
+sender_city_id: 03  receiver_city_id: 06
+sender_city_id: 09  receiver_city_id: 06
+answer: 863
+300 CMD_DELIVER
+robot_position: 0  num_delivery: 6
+sender_city_id: 08  receiver_city_id: 05
+sender_city_id: 04  receiver_city_id: 09
+sender_city_id: 00  receiver_city_id: 03
+sender_city_id: 08  receiver_city_id: 03
+sender_city_id: 06  receiver_city_id: 09
+sender_city_id: 02  receiver_city_id: 01
+answer: 802
+300 CMD_DELIVER
+robot_position: 5  num_delivery: 5
+sender_city_id: 09  receiver_city_id: 00
+sender_city_id: 03  receiver_city_id: 06
+sender_city_id: 05  receiver_city_id: 00
+sender_city_id: 07  receiver_city_id: 08
+sender_city_id: 03  receiver_city_id: 02
+answer: 529
+200 CMD_ADD
+from_city_id: 06  to_city_id: 09  time: 027
+300 CMD_DELIVER
+robot_position: 6  num_delivery: 8
+sender_city_id: 06  receiver_city_id: 07
+sender_city_id: 08  receiver_city_id: 09
+sender_city_id: 06  receiver_city_id: 09
+sender_city_id: 08  receiver_city_id: 07
+sender_city_id: 00  receiver_city_id: 01
+sender_city_id: 08  receiver_city_id: 03
+sender_city_id: 06  receiver_city_id: 01
+sender_city_id: 00  receiver_city_id: 05
+answer: 1215
+200 CMD_ADD
+from_city_id: 01  to_city_id: 06  time: 070
+200 CMD_ADD
+from_city_id: 07  to_city_id: 00  time: 074
+300 CMD_DELIVER
+robot_position: 5  num_delivery: 5
+sender_city_id: 03  receiver_city_id: 04
+sender_city_id: 09  receiver_city_id: 08
+sender_city_id: 07  receiver_city_id: 06
+sender_city_id: 05  receiver_city_id: 02
+sender_city_id: 03  receiver_city_id: 02
+answer: 682
+300 CMD_DELIVER
+robot_position: 8  num_delivery: 6
+sender_city_id: 08  receiver_city_id: 07
+sender_city_id: 00  receiver_city_id: 05
+sender_city_id: 04  receiver_city_id: 05
+sender_city_id: 04  receiver_city_id: 07
+sender_city_id: 06  receiver_city_id: 01
+sender_city_id: 00  receiver_city_id: 07
+answer: 754
+200 CMD_ADD
+from_city_id: 07  to_city_id: 08  time: 072
+200 CMD_ADD
+from_city_id: 03  to_city_id: 02  time: 028
+200 CMD_ADD
+from_city_id: 05  to_city_id: 06  time: 028
+200 CMD_ADD
+from_city_id: 09  to_city_id: 06  time: 078
+300 CMD_DELIVER
+robot_position: 3  num_delivery: 3
+sender_city_id: 03  receiver_city_id: 02
+sender_city_id: 03  receiver_city_id: 04
+sender_city_id: 05  receiver_city_id: 04
+answer: 211
+200 CMD_ADD
+from_city_id: 00  to_city_id: 05  time: 035
+300 CMD_DELIVER
+robot_position: 0  num_delivery: 4
+sender_city_id: 06  receiver_city_id: 07
+sender_city_id: 02  receiver_city_id: 09
+sender_city_id: 06  receiver_city_id: 09
+sender_city_id: 08  receiver_city_id: 05
+answer: 309
+200 CMD_ADD
+from_city_id: 07  to_city_id: 02  time: 010
+200 CMD_ADD
+from_city_id: 03  to_city_id: 04  time: 022
+200 CMD_ADD
+from_city_id: 03  to_city_id: 08  time: 018
+200 CMD_ADD
+from_city_id: 01  to_city_id: 08  time: 014
+300 CMD_DELIVER
+robot_position: 3  num_delivery: 3
+sender_city_id: 09  receiver_city_id: 00
+sender_city_id: 03  receiver_city_id: 06
+sender_city_id: 01  receiver_city_id: 00
+answer: 272
+200 CMD_ADD
+from_city_id: 02  to_city_id: 07  time: 055
+200 CMD_ADD
+from_city_id: 02  to_city_id: 05  time: 085
+300 CMD_DELIVER
+robot_position: 4  num_delivery: 8
+sender_city_id: 02  receiver_city_id: 07
+sender_city_id: 04  receiver_city_id: 03
+sender_city_id: 04  receiver_city_id: 07
+sender_city_id: 00  receiver_city_id: 07
+sender_city_id: 06  receiver_city_id: 07
+sender_city_id: 02  receiver_city_id: 05
+sender_city_id: 06  receiver_city_id: 05
+sender_city_id: 08  receiver_city_id: 05
+answer: 811
+300 CMD_DELIVER
+robot_position: 5  num_delivery: 5
+sender_city_id: 09  receiver_city_id: 00
+sender_city_id: 07  receiver_city_id: 08
+sender_city_id: 01  receiver_city_id: 04
+sender_city_id: 05  receiver_city_id: 02
+sender_city_id: 09  receiver_city_id: 02
+answer: 302
+200 CMD_ADD
+from_city_id: 08  to_city_id: 07  time: 075
+200 CMD_ADD
+from_city_id: 02  to_city_id: 01  time: 063
+200 CMD_ADD
+from_city_id: 08  to_city_id: 09  time: 023
+200 CMD_ADD
+from_city_id: 06  to_city_id: 07  time: 069
+200 CMD_ADD
+from_city_id: 04  to_city_id: 03  time: 025
+200 CMD_ADD
+from_city_id: 04  to_city_id: 07  time: 067
+300 CMD_DELIVER
+robot_position: 2  num_delivery: 4
+sender_city_id: 06  receiver_city_id: 07
+sender_city_id: 06  receiver_city_id: 09
+sender_city_id: 02  receiver_city_id: 01
+sender_city_id: 04  receiver_city_id: 09
+answer: 288

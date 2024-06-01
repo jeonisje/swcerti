@@ -10,14 +10,18 @@ import java.util.StringTokenizer;
 
 class UserSolution {
 	int MAX_D = 9;
-	int N;
+	int N, M;
 	ArrayList<Node>[] graph;
 	
 	
-	int[][] dMap;
-	int[] visited;
+	int[][] costMap;
+	int[][] deliveryMap;
+	int[][] deliveried;
+	int[][] visited;
 	int[] dist;
 	int[] arrFrom;
+	
+	int min;
 	
 	int cc;
 	public void init(int N, int E, int[] sCity, int[] eCity, int[] mTime) {
@@ -29,8 +33,10 @@ class UserSolution {
 		}
 		
 		dist = new int[N+1];
-		dMap = new int[N+1][N+1];
-		visited = new int[N+1];
+		costMap = new int[N+1][N+1];
+		deliveryMap = new int[N+1][N+1];
+		deliveried = new int[N+1][N+1];
+		visited = new int[N+1][MAX_D];
 		arrFrom = new int[N+1];
 		
 		for(int i=0; i<E; i++) {
@@ -40,6 +46,17 @@ class UserSolution {
 			
 			graph[from].add(new Node(to, time));
 		}
+		
+		for(int from=0; from<N+1; from++) {
+			dijkstra(from);
+			
+			for(int to=0; to<N+1; to++) {
+				if(dist[to] == Integer.MAX_VALUE) continue;
+				if(from == to) continue;
+				costMap[from][to] = dist[to];
+			}
+		}		
+		
 		return;
 	}
 	
@@ -67,111 +84,86 @@ class UserSolution {
 
 	public void add(int sCity, int eCity, int mTime) {
 		graph[sCity].add(new Node(eCity, mTime));
+		
+		dijkstra(sCity);
+
+		for(int to=0; to<N+1; to++) {
+			if(dist[to] == Integer.MAX_VALUE) continue;
+			if(sCity == to) continue;
+			costMap[sCity][to] = dist[to];
+		}
+		
 		return;
 	}
 
 	public int deliver(int mPos, int M, int[] mSender, int[] mReceiver) {
-		cc++;
+		this.M = M;
 		
-		for(int i=0; i<N+1; i++) {
-			targets[i] = new ArrayList<>();
-		}
+		cc++;
+		min = Integer.MAX_VALUE;
+		
 		
 		for(int i=0; i<M; i++) {
-			int from = mSender[i];
-			int to = mReceiver[i];
-			
-			dMap[from][to] = cc;
-			arrFrom[from] = cc;
-			targets[from].add(to);
+			deliveryMap[mSender[i]][mReceiver[i]] = cc;
 		}
+		dfs(mPos, 0, 0, new ArrayList<Integer>(), mPos+"");
+		return min;
 	
-		
-		return dijkstra(mPos, M);
 	}
 	
-	int dijkstra(int start, int M) {
-		int ans = Integer.MAX_VALUE;
-		for(int i=0; i<N+1; i++) {
-			for(int j=0; j<MAX_D; j++) {
-				dist[i][j][0] = Integer.MAX_VALUE;
-				dist[i][j][1] = Integer.MAX_VALUE;
-			}
+	void dfs(int cur, int count, int sum, ArrayList<Integer> dList, String path) {
+		if(count == M) {
+			System.out.println(path + ":" +  sum);
+			min = Math.min(min, sum);
+			return;
 		}
 		
-		//dist[start][0][0] = 0;
-		PriorityQueue<DNode> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.cost, o2.cost));
-		//q.add(new DNode(start, 0, -1, -1, 0, 0, 0));
+		visited[cur][count] = cc;
 		
-		
-		if(arrFrom[start] == 0) {
-			q.add(new DNode(start, 0, -1, -1, 0, 0, 0, start+""));
-		} else {
-			for(int target : targets[start]) {						  
-				q.add(new DNode(start, 0, start, target, 1, 0, 0, start+""));
-			}
-		}
-		
-		while(!q.isEmpty()) {
-			DNode cur = q.remove();
-			
-			if(dist[cur.id][M][1] != Integer.MAX_VALUE) {
-				System.out.println(cur.path);
-				ans = Math.min(ans, dist[cur.id][M][1]);
+		for(int next=0; next<N+1; next++) {
+			if(costMap[cur][next] == 0) 
 				continue;
-			}
-			System.out.println(cur.path);
-			if(dist[cur.id][cur.dCount][cur.deliveried] < cur.cost) continue;
 			
-			for(Node next : graph[cur.id]) {
-				int startId = cur.startId;
-				int targetId = cur.targetId;				
-				int flag = cur.flag;
-				int deliveried = cur.deliveried;
-				int dCount = cur.dCount;
+			int nextCost = sum + costMap[cur][next];
+			if(min < nextCost) continue;
+			int nextCount = count;
+			ArrayList<Integer> nextList = dList;
+			if(deliveryMap[cur][next] == cc) {
+				boolean found = true;
 				
-				int nextCost = cur.cost + next.cost;
-				if(flag == 1) {
-					// 배달물이 있음
-					if(dMap[startId][next.id] == cc  && next.id == targetId) {							
-							// 배달 위치가 맞음 -> 배달 처리
-						
-						if(visited[startId][next.id] != cc) {
-							dCount++;
-							deliveried = 1;
-							visited[startId][next.id] = cc;
-							flag = 0;
-							startId = -1;
-							targetId = -1;
+				if(!dList.isEmpty()) {
+					for(int k=0; k<dList.size()-1; k+=2) {
+						int num1 = dList.get(k);
+						int num2 = dList.get(k+1);
+						if(num1 == cur && num2 == next) {
+							found = false;
+							break;
 						}
-						
 					}
 				}
 				
-				if(dist[next.id][dCount][deliveried] <= nextCost) 
-					continue;
-				dist[next.id][dCount][deliveried] = nextCost;
-				
-				if(flag == 0) {
-					if(arrFrom[next.id] == cc) {
-						for(int target : targets[next.id]) {
-							//q.add(new DNode(next.id, nextCost, next.id, target, 1, dCount, 0));							  
-							q.add(new DNode(next.id, nextCost, next.id, target, 1, dCount, 0, cur.path + "->" + next.id + "("+dCount+")"));
-						}
-					} else {
-						//q.add(new DNode(next.id, nextCost, -1, -1, 0, dCount, 0));
-						q.add(new DNode(next.id, nextCost, -1, -1, 0, dCount, 0, cur.path + "->" + next.id + "("+dCount+")"));
-					}
-				} else {
-					//q.add(new DNode(next.id, nextCost, startId, targetId, flag, dCount, 0));
-					q.add(new DNode(next.id, nextCost, startId, targetId, flag, dCount, 0, cur.path + "->" + next.id + "("+dCount+")"));
+				if(found) {
+					//System.out.println(path + ":" +  sum);
+					nextList = new ArrayList<>();
+					nextList.addAll(dList);
+					nextList.add(cur);
+					nextList.add(next);
+					nextCount++;
 				}
+				
 			}
+			
+			if(visited[next][nextCount] == cc) continue;
+			visited[next][nextCount] = cc; 
+			dfs(next, nextCount, nextCost, nextList, path + " > "+next);
+			visited[cur][nextCount] = 0;
 			
 		}
 		
-		return ans;
+		
 	}
+	
+	
 	
 	class Node {
 		int id;
@@ -180,10 +172,6 @@ class UserSolution {
 			this.id = id;
 			this.cost = cost;
 		}
-	}
-	
-	
-		
 	}
 }
 
@@ -289,7 +277,7 @@ public class Main {
     	long start = System.currentTimeMillis();
     	int T, MARK;
 
-        System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\배송로봇\\sample_input2.txt"));
+        System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\배송로봇\\sample_input3.txt"));
         br = new BufferedReader(new InputStreamReader(System.in));
 
         StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");

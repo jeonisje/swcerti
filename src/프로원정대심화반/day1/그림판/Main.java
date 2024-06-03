@@ -71,10 +71,10 @@ class UserSolution {
 		return idx;
 	}
 	void encoding(int y, int x, int size, char[] code) {
-		if(!check(y, x, size)) {
-			int half = size / 2; 
+		if(!check(y, x, size)) {			
 			code[idx] = '('; 
 			idx++; 
+			int half = size / 2; 
 			encoding(y, x, half, code);
 			encoding(y, x + half, half, code);
 			encoding(y + half, x, half, code);

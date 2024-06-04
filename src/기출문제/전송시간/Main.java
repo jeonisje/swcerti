@@ -5,32 +5,48 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
-class UserSolution {
-	
+class UserSolution {	
 	int N, K;
 	
-	ArrayList<Node>[][] graph;	// 전체
-	ArrayList<Node>[] graphForRoot;	// 루트노드용
-	ArrayList<Node>[][] summaryGraph;	// group간 연결
-	
+	ArrayList<Node>[][] graph;	// 전체	
+	ArrayList<Node>[][] summaryGraph;	// 그룹내 요약	
+	ArrayList<Node>[][] groupGraph;	// group간 연결
 	
 	int MAX_NODE = 31;
+	HashMap<Integer, Integer>[][] gRemoved;	// group간 삭제정보
+	HashMap<Integer, Integer>[][] removed;	// group내 삭제정보	
 	
+	int[] dist;
 	
+	int cc;
   
 	public void init(int N, int K, int[] mNodeA, int[] mNodeB, int[] mTime) {
 		this.N = N;
 		this.K = K;
 		
-		graph = new ArrayList[N+1][MAX_NODE];
-		summaryGraph = new ArrayList[N+1][MAX_NODE];		
+		cc = 0;
+		
+		graph = new ArrayList[N+1][MAX_NODE];		
+		gRemoved = new HashMap[N+1][MAX_NODE];
+		removed = new HashMap[N+1][MAX_NODE];		
+		
+		groupGraph = new ArrayList[N+1][4];
+		summaryGraph = new ArrayList[N+1][4];		
+		
+		dist = new int[MAX_NODE];
 		
 		for(int i=0; i<N+1; i++) {
 			for(int j=0; j<MAX_NODE; j++) {
-				graph[i][j] = new ArrayList<>();
+				graph[i][j] = new ArrayList<>();				
+				removed[i][j] = new HashMap<>();
+				gRemoved[i][j] = new HashMap<>();
+			}
+			for(int j=0; j<4; j++) {			
+				groupGraph[i][j] = new ArrayList<>();
 				summaryGraph[i][j] = new ArrayList<>();
 			}
 		}
@@ -46,30 +62,110 @@ class UserSolution {
 			int groupA = nodeA / 100;
 			int groupB = nodeB / 100;
 			
-			graph[groupA][nA].add(new Node(groupB, nB, time, false));
-			graph[groupB][nB].add(new Node(groupA, nA, time, false));
+			if(groupA == groupB) {			
+				graph[groupA][nA].add(new Node(nB, time));
+				graph[groupB][nB].add(new Node(nA, time));
+			} else {
+				groupGraph[groupA][nA].add(new Node(groupB, nB, time));
+				groupGraph[groupB][nB].add(new Node(groupA, nA, time));
+			}
+		}
+		
+		for(int group=1; group<N+1; group++) {
+			for(int from=1; from<3; from++) {
+				for(int to=from+1; to<4; to++) {
+					int time = getMinTime(group, from, to);
+					if(time == -1) continue;
+					summaryGraph[group][from].add(new Node(to, time));
+					summaryGraph[group][to].add(new Node(from, time));
+				}
+			}
 		}
 		
 		return; 
 	}
 	
-	void setRootSummary() {
-		//summaryGraph
-	}
-	
-	void makeSummary(int group) {
-		int[] dist = new int[32];
+	int getMinTime(int group, int start, int end) {
 		Arrays.fill(dist, Integer.MAX_VALUE);
+		dist[start] = 0;
 		
 		PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.time, o2.time));
+		q.add(new Node(start, 0));
 		
+		while(!q.isEmpty()) {
+			Node cur = q.remove();
+			if(cur.id == end) return dist[cur.id];
+			if(dist[cur.id] < cur.time) continue;
+			for(Node next : graph[group][cur.id]) {
+				int nextTime = cur.time + next.time;
+				if(dist[next.id] <= nextTime) continue;
+				if(removed[group][cur.id].containsKey(next.id)) continue;
+				dist[next.id] = nextTime;
+				q.add(new Node(next.id, dist[next.id]));
+			}
+		}
+		return -1;
 	}
 	 
 	public void addLine(int mNodeA, int mNodeB, int mTime) {
+		int nA = mNodeA % 100;
+		int nB = mNodeB % 100;
+		
+		int groupA = mNodeB / 100;
+		int groupB = mNodeB / 100;
+		
+		if(groupA == groupB) {			
+			graph[groupA][nA].add(new Node(nB, mTime));
+			graph[groupB][nB].add(new Node(nA, mTime));
+		
+			for(int i=0; i<4; i++) {
+				summaryGraph[groupA][i] = new ArrayList<>();
+			}
+			for(int from=1; from<3; from++) {
+				for(int to=from+1; to<4; to++) {
+					int time = getMinTime(groupA, from, to);
+					if(time == -1) continue;
+					summaryGraph[groupA][from].add(new Node(to, time));
+					summaryGraph[groupA][to].add(new Node(from, time));
+				}
+			}			
+			
+		} else {
+			groupGraph[groupA][nA].add(new Node(groupB, nB, mTime));
+			groupGraph[groupB][nB].add(new Node(groupA, nA, mTime));
+		}		
+		
 	    return ;
 	}
 
 	public void removeLine(int mNodeA, int mNodeB) {
+		int nA = mNodeA % 100;
+		int nB = mNodeB % 100;
+		
+		int groupA = mNodeB / 100;
+		int groupB = mNodeB / 100;
+		
+		if(groupA == groupB) {		
+			removed[groupA][nA].put(nB, nB);
+			removed[groupB][nB].put(nA, nA);		
+			
+			for(int i=0; i<4; i++) {
+				summaryGraph[groupA][i] = new ArrayList<>();
+			}
+			for(int from=1; from<3; from++) {
+				for(int to=from+1; to<4; to++) {
+					int time = getMinTime(groupA, from, to);
+					if(time == -1) continue;
+					summaryGraph[groupA][from].add(new Node(to, time));
+					summaryGraph[groupA][to].add(new Node(from, time));
+				}
+			}	
+			
+		} else {
+			gRemoved[groupA][nA].put(nB, nB);
+			gRemoved[groupB][nB].put(nA, nA);			
+		}		
+		
 	    return ;
 	}
 	
@@ -81,12 +177,16 @@ class UserSolution {
 		int group;
 		int id;
 		int time;
-		boolean deleted = false;
-		public Node(int group, int id, int time, boolean deleted) {		
+		
+		public Node(int id, int time) {		
+			this.id = id;
+			this.time = time;
+		}
+
+		public Node(int group, int id, int time) {			
 			this.group = group;
 			this.id = id;
 			this.time = time;
-			this.deleted = deleted;
 		}	
 	}
 }

@@ -1,4 +1,4 @@
-package 기출문제.전송시간;
+package 기출문제.전송시간._01;
 
 
 import java.io.BufferedReader;
@@ -14,6 +14,7 @@ class UserSolution {
 	
 	ArrayList<Node>[][] graph;	// 전체	
 	ArrayList<Node>[][] groupGraph;	// group간 연결
+	ArrayList<Node>[][] summaryGraph;	// group간 연결
 	
 	int MAX_NODE = 31;	
 	
@@ -32,6 +33,7 @@ class UserSolution {
 		graph = new ArrayList[N+1][MAX_NODE];				
 		
 		groupGraph = new ArrayList[N+1][4];		
+		summaryGraph = new ArrayList[N+1][4];		
 		gRemoved = new HashMap[N+1][4];		
 		removed = new HashMap[N+1][N+1];	
 		
@@ -62,24 +64,13 @@ class UserSolution {
 			int groupB = nodeB / 100;
 			
 			if(groupA == groupB) {			
-				graph[groupA][nA].add(new Node(groupA, nB, time));
-				graph[groupB][nB].add(new Node(groupB, nA, time));
+				graph[groupA][nA].add(new Node(nB, time));
+				graph[groupB][nB].add(new Node(nA, time));
 				map[groupA][nA][nB] = 1;
 				map[groupA][nB][nA] = 1;
 			} else {
 				groupGraph[groupA][nA].add(new Node(groupB, nB, time));
 				groupGraph[groupB][nB].add(new Node(groupA, nA, time));
-			}
-		}
-		
-		for(int group=1; group<N+1; group++) {
-			for(int from=1; from<3; from++) {
-				for(int to=from+1; to<4; to++) {
-					int time = getMinTime(group, from, to);
-					if(time == -1) continue;
-					groupGraph[group][from].add(new Node(group, to, time));
-					groupGraph[group][to].add(new Node(group, from, time));
-				}
 			}
 		}
 		
@@ -91,7 +82,7 @@ class UserSolution {
 		dist[start] = 0;
 		
 		PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.time, o2.time));
-		q.add(new Node(0, start, 0));
+		q.add(new Node(start, 0));
 		
 		while(!q.isEmpty()) {
 			Node cur = q.remove();
@@ -103,7 +94,7 @@ class UserSolution {
 				
 				if(map[group][cur.id][next.id] == 0) continue;
 				dist[next.id] = nextTime;
-				q.add(new Node(group, next.id, dist[next.id]));
+				q.add(new Node(next.id, dist[next.id]));
 			}
 		}
 		return -1;
@@ -117,31 +108,11 @@ class UserSolution {
 		int groupB = mNodeB / 100;
 		
 		if(groupA == groupB) {			
-			graph[groupA][nA].add(new Node(groupB, nB, mTime));
-			graph[groupB][nB].add(new Node(groupA, nA, mTime));
+			graph[groupA][nA].add(new Node(nB, mTime));
+			graph[groupB][nB].add(new Node(nA, mTime));
 		
 			map[groupA][nA][nB] = 1;
-			map[groupA][nB][nA] = 1;			
-			
-			for(int from=1; from<4; from++) {
-				ArrayList<Node> toList = new ArrayList<>();
-				for(Node node : groupGraph[groupA][from]) {
-					if(node.group == groupA) continue;
-					toList.add(node);
-				}
-				groupGraph[groupA][from] = new ArrayList<>();
-				groupGraph[groupA][from].addAll(toList);
-			}
-			
-			for(int from=1; from<3; from++) {
-				for(int to=from+1; to<4; to++) {
-					int time = getMinTime(groupA, from, to);
-					if(time == -1) continue;
-					groupGraph[groupA][from].add(new Node(groupA, to, time));
-					groupGraph[groupA][to].add(new Node(groupA, from, time));
-				}
-			}			
-			
+			map[groupA][nB][nA] = 1;	
 		} else {
 			groupGraph[groupA][nA].add(new Node(groupB, nB, mTime));
 			groupGraph[groupB][nB].add(new Node(groupA, nA, mTime));
@@ -161,29 +132,9 @@ class UserSolution {
 		int groupB = mNodeB / 100;
 		
 		if(groupA == groupB) {		
-			if(map[groupA][nA][nB] == 0) return;
-						
+			if(map[groupA][nA][nB] == 0) return;						
 			map[groupA][nA][nB] = 0;
-			map[groupA][nB][nA] = 0;			
-			
-			for(int from=1; from<4; from++) {
-				ArrayList<Node> toList = new ArrayList<>();
-				for(Node node : groupGraph[groupA][from]) {
-					if(node.group == groupA) continue;
-					toList.add(node);
-				}
-				groupGraph[groupA][from] = new ArrayList<>();
-				groupGraph[groupA][from].addAll(toList);
-			}
-			
-			for(int from=1; from<3; from++) {
-				for(int to=from+1; to<4; to++) {
-					int time = getMinTime(groupA, from, to);
-					if(time == -1) continue;
-					groupGraph[groupA][from].add(new Node(groupA, to, time));
-					groupGraph[groupA][to].add(new Node(groupA, from, time));
-				}
-			}	
+			map[groupA][nB][nA] = 0;	
 			
 		} else {
 			gRemoved[groupA][nA].put(groupB, nB);
@@ -193,7 +144,29 @@ class UserSolution {
 	    return ;
 	}
 	
+	void makeSummaray() {
+		for(int i=0; i<N+1; i++) {			
+			for(int j=0; j<4; j++) {			
+				summaryGraph[i][j] = new ArrayList<>();
+				summaryGraph[i][j].addAll(groupGraph[i][j]);
+			}
+		}
+		
+		for(int group=1; group<N+1; group++) {
+			for(int from=1; from<3; from++) {
+				for(int to=from+1; to<4; to++) {
+					int time = getMinTime(group, from, to);
+					if(time == -1) continue;
+					summaryGraph[group][from].add(new Node(group, to, time));
+					summaryGraph[group][to].add(new Node(group, from, time));
+				}
+			}
+		}
+		return;
+	}
+	
 	public int checkTime(int mNodeA, int mNodeB) {
+		makeSummaray();
 		for(int i=0; i<N+1; i++) {
 			for(int j=0; j<4; j++) {
 				Arrays.fill(gDist[i], Integer.MAX_VALUE);
@@ -207,7 +180,8 @@ class UserSolution {
 		
 		while(!q.isEmpty()) {
 			Node cur = q.remove();
-			if(cur.group == 0  && cur.id == mNodeB) return gDist[cur.group][cur.id];
+			if(cur.group == 0  && cur.id == mNodeB) 
+				return gDist[cur.group][cur.id];
 			if(gDist[cur.group][cur.id] < cur.time) continue;
 			
 			for(Node next : groupGraph[cur.group][cur.id]) {
@@ -228,6 +202,12 @@ class UserSolution {
 		int group;
 		int id;
 		int time;
+		
+		public Node(int id, int time) {		
+			this.id = id;
+			this.time = time;
+		}
+
 		public Node(int group, int id, int time) {			
 			this.group = group;
 			this.id = id;

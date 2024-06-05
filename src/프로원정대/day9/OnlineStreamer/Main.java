@@ -43,19 +43,69 @@ class UserSolution {
 	}
 
 	public int subscribe(int mId, int mNum) {
-		return 0; 
+		updateTree(1, N, 1, mId, mNum);
+		return arr[mId]; 
+	}
+	
+	void updateTree(int start, int end, int node, int index, int value) {
+		if(index < start || index > end) return;
+		if(start == end) {
+			treeForSum[node] += value;
+			treeForMin[node] += value;
+			treeForMax[node] += value;
+			arr[index] += value;
+			return;
+		}
+		
+		int mid = (start + end) / 2;
+		updateTree(start, mid, node*2, index, value);
+		updateTree(mid+1,end, node*2+1, index, value);
+		treeForSum[node] = treeForSum[node*2] + treeForSum[node*2+1];
+		treeForMin[node] = Math.min(treeForMin[node*2], treeForMin[node*2+1]); 
+		treeForMax[node] = Math.max(treeForMax[node*2], treeForMax[node*2+1]); 		
 	}
 	 
 	public int unsubscribe(int mId, int mNum) {
-		return 0; 
+		updateTree(1, N, 1, mId, -mNum);
+		return arr[mId]; 
 	}
 	 
 	public int count(int sId, int eId) {
-		return 0; 
+		return queryForSum(1, N, 1, sId, eId);
+	}
+	
+	int queryForSum(int start, int end, int node, int left, int right) {
+		if(end < left || right < start) return 0;
+		if(left <= start && end <= right) return treeForSum[node];
+		int mid = (start + end) / 2;
+		int lv = queryForSum(start, mid, node*2, left, right);
+		int rv = queryForSum(mid+1, end, node*2+1, left, right);
+		return lv + rv;
+	}
+	
+	
+	int queryForMin(int start, int end, int node, int left, int right) {
+		if(end < left || right < start) return Integer.MAX_VALUE;
+		if(left <= start && end <= right) return treeForMin[node];
+		int mid = (start + end) / 2;
+		int lv = queryForMin(start, mid, node*2, left, right);
+		int rv = queryForMin(mid+1, end, node*2+1, left, right);
+		return Math.min(lv, rv);
+	}
+	
+	int queryForMax(int start, int end, int node, int left, int right) {
+		if(end < left || right < start) return 0;
+		if(left <= start && end <= right) return treeForMax[node];
+		int mid = (start + end) / 2;
+		int lv = queryForMax(start, mid, node*2, left, right);
+		int rv = queryForMax(mid+1, end, node*2+1, left, right);
+		return Math.max(lv, rv);
 	}
 	
 	public int calculate(int sId, int eId) {
-		return 0; 
+		int min = queryForMin(1, N, 1, sId, eId);
+		int max = queryForMax(1, N, 1, sId, eId);
+		return max - min;  
 	}
 }
 
@@ -146,12 +196,12 @@ class Main {
 		return okay;
 	}
 	private static void print(int num, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret) System.err.println("===================오류=======================");
-		System.out.println("[" + num +"] " + cmd + " : " + ans + "=" + ret + "(" +Arrays.deepToString(o)+")");
+		//if(ans!=ret) System.err.println("===================오류=======================");
+		//System.out.println("[" + num +"] " + cmd + " : " + ans + "=" + ret + "(" +Arrays.deepToString(o)+")");
 	}
 	public static void main(String[] args) throws Exception {
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\프로원정대\\day9\\OnlineStreamer\\sample_input2.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\프로원정대\\day9\\OnlineStreamer\\sample_input.txt"));
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");

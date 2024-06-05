@@ -181,8 +181,8 @@ public class Main {
 	private static StringTokenizer st;
 	
 	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret)  System.err.println("----------------------오류--------------------");
-		System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
+		//if(ans!=ret)  System.err.println("----------------------오류--------------------");
+		//System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
 	}
 	private static boolean run(BufferedReader br) throws Exception {
 		
@@ -240,7 +240,7 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\KNN\\sample_input3.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\KNN\\sample_input.txt"));
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");

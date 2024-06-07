@@ -1,0 +1,346 @@
+1 100
+344
+1 fvfwtfwvvvwfwtwwtfwvvtvwwvwrwffvttvowwvvvwtfttvffwtttvwvttffttvvwvtfwwwtfttwvvffwwvffvfttvftawlwwvfd
+3 3
+3 1
+5 vwfw 1
+4
+5 wfwf 0
+2 tv
+2 twtf
+4
+2 n
+5 tvo 1
+2 fw
+5 vwfw 1
+3 2
+2 fft
+4
+5 tw 7
+4
+5 ttwv 1
+2 mwvt
+2 wv
+3 3
+4
+5 ttv 2
+4
+5 tvwv 1
+4
+2 it
+2 tu
+2 wt
+3 3
+5 ffvt 1
+2 vwww
+3 1
+3 1
+3 3
+4
+5 tvv 1
+3 1
+4
+3 1
+3 3
+2 vtw
+3 3
+5 ftf 0
+2 f
+4
+3 3
+3 1
+2 tw
+3 2
+2 wfo
+5 wtwf 0
+5 tfw 3
+5 twt 0
+2 vtvv
+2 fl
+5 wtf 4
+3 3
+4
+2 tf
+2 wvt
+5 vtf 0
+3 3
+4
+5 wvvv 2
+4
+2 twf
+2 ttww
+2 tfft
+4
+2 ft
+5 vvat 0
+4
+2 wa
+2 tjt
+4
+5 vvw 3
+2 fvt
+5 awtf 1
+5 tfwv 2
+4
+2 u
+2 vvd
+2 f
+5 ffwr 1
+2 tf
+5 wvw 1
+4
+2 twfw
+4
+2 f
+5 wrwv 1
+2 vv
+4
+5 vwfw 1
+5 fttw 1
+4
+5 wf 11
+4
+2 t
+5 wftt 0
+4
+5 wrw 1
+4
+5 jwt 0
+4
+3 3
+5 wiwv 0
+5 vtwt 0
+5 ttwt 0
+2 vwv
+4
+2 vf
+3 3
+4
+3 2
+4
+5 wtvf 0
+2 vf
+4
+3 2
+2 nwv
+4
+2 da
+2 vtta
+4
+5 fwtt 1
+4
+5 fwsi 0
+4
+2 twv
+4
+3 3
+3 2
+3 2
+4
+5 sftv 0
+4
+2 f
+4
+2 t
+4
+2 fv
+2 wv
+2 tv
+2 tw
+2 ff
+4
+3 3
+3 2
+4
+2 w
+5 thtv 0
+5 vffv 2
+5 vf 8
+4
+5 ttvw 1
+5 fvf 2
+2 fwtv
+2 v
+4
+2 wtf
+5 wtff 1
+3 1
+5 ftav 0
+2 f
+4
+3 2
+3 2
+5 vvd 1
+5 ftw 7
+2 ww
+5 ffyv 0
+2 vvw
+2 vt
+4
+5 ffw 3
+2 ww
+5 tfvt 1
+2 tttt
+4
+5 ffvt 1
+2 vv
+4
+5 tawt 1
+4
+5 ttfy 0
+5 ffv 4
+3 3
+2 vtw
+2 vfv
+3 2
+4
+5 ftwt 0
+3 1
+4
+2 w
+2 tv
+4
+2 f
+5 jtaw 1
+4
+2 wdtf
+4
+2 wat
+3 2
+4
+5 vvff 0
+5 ttd 0
+2 fywf
+4
+5 fttw 1
+5 wvtf 1
+4
+3 4
+5 vfw 0
+3 2
+4
+5 fttv 3
+2 ta
+5 ltfw 0
+3 3
+4
+2 tff
+5 wtt 2
+2 fvtv
+2 f
+2 tff
+2 vv
+5 vvtf 0
+4
+5 vftt 1
+3 3
+5 wfvt 0
+2 f
+2 tvvv
+3 4
+4
+5 vwwt 0
+4
+5 wnf 1
+4
+5 twwf 2
+5 ffzw 0
+5 cwtv 0
+3 4
+4
+5 fvf 2
+4
+5 tatf 0
+3 2
+2 twwv
+4
+3 1
+2 w
+4
+5 ftww 3
+5 uwfw 0
+2 f
+5 ttdl 0
+4
+5 vfww 0
+4
+2 v
+4
+5 fvil 0
+2 wvt
+2 qvtv
+2 if
+4
+2 s
+4
+2 fv
+4
+3 1
+4
+2 ft
+3 4
+3 1
+4
+2 wvfv
+5 twft 2
+2 wtfw
+5 wfft 0
+5 wffv 2
+5 ttiu 0
+3 5
+4
+3 4
+4
+3 3
+4
+2 vf
+4
+5 vwwf 1
+4
+3 1
+3 1
+2 ft
+4
+5 vvww 1
+4
+2 tvwf
+5 qft 1
+2 fwvt
+5 vffw 2
+4
+2 tf
+4
+5 fttt 0
+4
+5 ttwf 1
+5 vtvt 1
+2 w
+3 2
+2 ttf
+5 wft 6
+5 tfft 2
+5 wwvw 0
+4
+2 vhwt
+4
+2 vt
+4
+5 wtvv 1
+4
+2 t
+4
+5 wvt 6
+5 www 1
+5 vwvt 3
+5 vvwf 1
+4
+2 vaft
+4
+5 tdv 0
+4
+5 tfw 0
+5 vtw 3
+4
+2 t
+4
+2 fnt

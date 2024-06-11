@@ -3,6 +3,7 @@ package 기출문제.딱지게임;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
@@ -23,16 +24,120 @@ class Solution {
     	PARENT[x] = y; 
     }
     
+    int MAX_ID = 30_001;
+    int N, M;    
+    ArrayList<Square>[][] summaryMap;
+    
+    int UNIT_CNT;
+    
+    int[] countByPid;
+    int[] ownedById;
+    int[] used;
+    int[] countByPlayer;
+    
+    int[] tempCountByPlayer;
+        
+    int cc;
+    int squareId;
+    
     public void init(int N, int M) {
+    	squareId = 0;
+    	cc = 0;
+    	
+    	this.N = N;
+    	this.M = M;
+    	
+    	UNIT_CNT = N / M;
+    	
+    	countByPid = new int[MAX_ID];
+    	ownedById = new int[MAX_ID];
+    	used = new int[MAX_ID];
+    	countByPlayer = new int[3];
+    	tempCountByPlayer = new int[3];
+    	
+    	summaryMap = new ArrayList[UNIT_CNT][UNIT_CNT];
+    	for(int i=0; i<UNIT_CNT; i++) {
+    		for(int j=0; j<UNIT_CNT; j++) {
+    			summaryMap[i][j] = new ArrayList<>();
+    		}
+    	}
+    	
       	return; 
     }
     
     public int add(int row, int col, int size, int pid) {
-    	return 0; 
+    	squareId++;
+    	cc++;
+    	Square newSquare = new Square(squareId, row, col, size);
+    	
+    	int locY = row / M;
+    	int locX = col / M;
+    	
+    	int startY = Math.max(locY - 1, 0);
+    	int startX = Math.max(locX - 1, 0);
+    	int endY = Math.min(locY + 1, UNIT_CNT - 1);
+    	int endX = Math.min(locX + 1, UNIT_CNT - 1);
+    	
+    	ArrayList<Square> overlap = new ArrayList<>();
+    	for(int i=startY; i<=endY; i++) {
+    		for(int j=startX; j<=endX; j++) {
+    			for(Square square : summaryMap[i][j]) {
+    				if(square.row >= row + size) continue;
+    				if(square.col >= col + size) continue;
+    				if(square.row + square.size <= row) continue;
+    				if(square.col + square.size <= col) continue;
+    				
+    				int sePid = Find(square.id);
+    				if(used[sePid] == cc) continue;
+    				overlap.add(square);
+    				used[sePid] = cc;
+    			}
+    		}
+    	}
+    	ownedById[squareId] = pid;
+    	PARENT[squareId] = squareId;
+    	countByPid[squareId] = 1;
+    	
+    	tempCountByPlayer[1] = 0;
+    	tempCountByPlayer[2] = 0;
+    	
+    	int player = 1;
+    	if(pid == 1) {
+    		player = 2;
+    	}
+    	/*
+    	for(Square square : overlap) {
+    		Union(square.id, squareId, pid);
+    		int sqPid = Find(square.id);
+    		if(ownedById[sqPid] != pid) {
+    			tempCountByPlayer[player] += countByPid[sqPid];
+    		} else {
+    			tempCountByPlayer[pid] += countByPid[sqPid];
+    		}
+    		countByPid[squareId] += countByPid[sqPid];
+    	}*/
+    	summaryMap[locY][locX].add(newSquare);
+    	countByPlayer[player] += tempCountByPlayer[player];
+    	countByPlayer[pid] += tempCountByPlayer[pid];
+    	
+    	return countByPlayer[pid]; 
     }
     
     public int get(int row, int col) {
     	return 0; 
+    }
+    
+    class Square {
+    	int id;
+    	int row;
+    	int col;
+    	int size;
+		public Square(int id, int row, int col, int size) {		
+			this.id = id;
+			this.row = row;
+			this.col = col;
+			this.size = size;
+		}
     }
 }
 public class Main {

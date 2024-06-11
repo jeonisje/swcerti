@@ -24,18 +24,16 @@ class Solution {
     	PARENT[x] = y; 
     }
     
-    int MAX_ID = 30_001;
     int N, M;    
-    ArrayList<Square>[][] summaryMap;
-    
     int UNIT_CNT;
     
+    ArrayList<Square>[][] summaryMap;    
+        
     int[] countByPid;
+    int[] countByPlayer;
+    int[] tempCountByPlayer;
     int[] ownedById;
     int[] used;
-    int[] countByPlayer;
-    
-    int[] tempCountByPlayer;
         
     int cc;
     int squareId;
@@ -49,9 +47,9 @@ class Solution {
     	
     	UNIT_CNT = N / M;
     	
-    	countByPid = new int[MAX_ID];
-    	ownedById = new int[MAX_ID];
-    	used = new int[MAX_ID];
+    	countByPid = new int[LM];
+    	ownedById = new int[LM];
+    	used = new int[LM];
     	countByPlayer = new int[3];
     	tempCountByPlayer = new int[3];
     	
@@ -94,36 +92,60 @@ class Solution {
     			}
     		}
     	}
-    	ownedById[squareId] = pid;
-    	PARENT[squareId] = squareId;
-    	countByPid[squareId] = 1;
-    	
-    	tempCountByPlayer[1] = 0;
-    	tempCountByPlayer[2] = 0;
+    	summaryMap[locY][locX].add(newSquare);
     	
     	int player = 1;
     	if(pid == 1) {
     		player = 2;
-    	}
-    	/*
+    	}    	
+    	
+    	PARENT[squareId] = squareId;
+    	countByPid[squareId] = 1;
+    	ownedById[squareId] = pid;
+    	
+    	tempCountByPlayer[player] = 0;
+    	tempCountByPlayer[pid] = 1;   	    
+    	
     	for(Square square : overlap) {
-    		Union(square.id, squareId, pid);
     		int sqPid = Find(square.id);
+    		Union(sqPid, squareId, pid);
+    		countByPid[squareId] += countByPid[sqPid];
     		if(ownedById[sqPid] != pid) {
     			tempCountByPlayer[player] += countByPid[sqPid];
-    		} else {
     			tempCountByPlayer[pid] += countByPid[sqPid];
     		}
-    		countByPid[squareId] += countByPid[sqPid];
-    	}*/
-    	summaryMap[locY][locX].add(newSquare);
-    	countByPlayer[player] += tempCountByPlayer[player];
+    		
+    	}
+    	
+    	countByPlayer[player] -= tempCountByPlayer[player];
     	countByPlayer[pid] += tempCountByPlayer[pid];
     	
     	return countByPlayer[pid]; 
     }
     
-    public int get(int row, int col) {
+    public int get(int row, int col) {    	
+    	int locY = row / M;
+    	int locX = col / M;
+    	
+    	int startY = Math.max(locY - 1, 0);
+    	int startX = Math.max(locX - 1, 0);
+    	int endY = Math.min(locY + 1, UNIT_CNT - 1);
+    	int endX = Math.min(locX + 1, UNIT_CNT - 1);
+    	
+    	for(int i=startY; i<=endY; i++) {
+    		for(int j=startX; j<=endX; j++) {
+    			for(Square square : summaryMap[i][j]) {
+    				if(square.row > row) continue;
+    				if(square.col > col) continue;
+    				if(square.row + square.size <= row) continue;
+    				if(square.col + square.size <= col) continue;
+    				
+    				int pid = Find(square.id);
+    				return ownedById[pid];
+    			}
+    		}
+    	}
+    	
     	return 0; 
     }
     

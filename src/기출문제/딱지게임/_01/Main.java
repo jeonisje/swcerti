@@ -1,4 +1,4 @@
-package 기출문제.딱지게임;
+package 기출문제.딱지게임._01;
 
 
 import java.io.BufferedReader;
@@ -65,8 +65,7 @@ class Solution {
     public int add(int row, int col, int size, int pid) {
     	squareId++;
     	cc++;
-    	Square newSquare = new Square(squareId, row, col, size);
-    	
+    
     	int locY = row / M;
     	int locX = col / M;
     	
@@ -74,24 +73,6 @@ class Solution {
     	int startX = Math.max(locX - 1, 0);
     	int endY = Math.min(locY + 1, UNIT_CNT - 1);
     	int endX = Math.min(locX + 1, UNIT_CNT - 1);
-    	
-    	ArrayList<Integer> overlap = new ArrayList<>();
-    	for(int i=startY; i<=endY; i++) {
-    		for(int j=startX; j<=endX; j++) {
-    			for(Square square : summaryMap[i][j]) {
-    				if(square.row >= row + size) continue;
-    				if(square.col >= col + size) continue;
-    				if(square.row + square.size <= row) continue;
-    				if(square.col + square.size <= col) continue;
-    				
-    				int sePid = Find(square.id);
-    				if(used[sePid] == cc) continue;
-    				overlap.add(sePid);
-    				used[sePid] = cc;
-    			}
-    		}
-    	}
-    	summaryMap[locY][locX].add(newSquare);
     	
     	int player = 1;
     	if(pid == 1) {
@@ -105,15 +86,30 @@ class Solution {
     	tempCountByPlayer[player] = 0;
     	tempCountByPlayer[pid] = 1;   	    
     	
+    	ArrayList<Integer> overlap = new ArrayList<>();
+    	for(int i=startY; i<=endY; i++) {
+    		for(int j=startX; j<=endX; j++) {
+    			for(Square square : summaryMap[i][j]) {
+    				if(square.row >= row + size|| square.col >= col + size || square.row + square.size <= row || square.col + square.size <= col) continue;
+    				//if(square.col >= col + size) continue;
+    				//if(square.row + square.size <= row) continue;
+    				//if(square.col + square.size <= col) continue;
+    				
+    				int sePid = Find(square.id);
+    				if(used[sePid] == cc) continue;
+    				overlap.add(sePid);
+    				used[sePid] = cc;
+    			}
+    		}
+    	}
+    	summaryMap[locY][locX].add(new Square(squareId, row, col, size));
+    	
     	for(int sqPid : overlap) {
-    		//int sqPid = Find(square.id);
     		Union(sqPid, squareId, pid);
     		countByPid[squareId] += countByPid[sqPid];
-    		if(ownedById[sqPid] != pid) {
-    			tempCountByPlayer[player] += countByPid[sqPid];
-    			tempCountByPlayer[pid] += countByPid[sqPid];
-    		}
-    		
+    		if(ownedById[sqPid] == pid) continue;
+    		tempCountByPlayer[player] += countByPid[sqPid];
+    		tempCountByPlayer[pid] += countByPid[sqPid];    		
     	}
     	
     	countByPlayer[player] -= tempCountByPlayer[player];
@@ -133,11 +129,14 @@ class Solution {
     	
     	for(int i=startY; i<=endY; i++) {
     		for(int j=startX; j<=endX; j++) {
-    			for(Square square : summaryMap[i][j]) {
-    				if(square.row > row) continue;
-    				if(square.col > col) continue;
-    				if(square.row + square.size <= row) continue;
-    				if(square.col + square.size <= col) continue;
+    			//for(Square square : summaryMap[i][j]) {
+    			for(int k=0; k<summaryMap[i][j].size(); k++) {
+    				Square square = summaryMap[i][j].get(k);
+    				if(square.row > row || square.col > col || square.row + square.size <= row || square.col + square.size <= col) continue;
+    				//if(square.row > row) continue;
+    				//if(square.col > col) continue;
+    				//if(square.row + square.size <= row) continue;
+    				//if(square.col + square.size <= col) continue;
     				
     				int pid = Find(square.id);
     				return ownedById[pid];

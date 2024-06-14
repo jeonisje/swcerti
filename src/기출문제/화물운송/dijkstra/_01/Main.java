@@ -1,8 +1,9 @@
-package 기출문제.화물운송.dijkstra;
+package 기출문제.화물운송.dijkstra._01;
 
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.PriorityQueue;
@@ -13,7 +14,6 @@ class UserSolution {
 	int N, K;
 	
 	ArrayList<Node>[] graph;
-	int[] dist;
 	
 	public void init(int N, int K, int[] sCity, int[] eCity, int[] mLimit) {
 		this.N = N;
@@ -27,7 +27,6 @@ class UserSolution {
 		for(int i=0; i<K; i++) {
 			graph[sCity[i]].add(new Node(eCity[i], mLimit[i]));			
 		}
-		dist = new int[N];
 		return;
 	}
 	
@@ -40,25 +39,26 @@ class UserSolution {
 		return dijkstra(sCity, eCity); 
 	}
 	
-	int dijkstra(int start, int end) {		
+	int dijkstra(int start, int end) {
+		int[] dist = new int[N];
 		Arrays.fill(dist, 0);
 		
-		
 		PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o2.limit, o1.limit));
-		q.add(new Node(start, Integer.MAX_VALUE));
-		dist[start] = Integer.MAX_VALUE;
-		
+		q.add(new Node(start, MAX_LIMIT));
+		dist[start] = MAX_LIMIT;
+	
 		while(!q.isEmpty()) {
-			Node cur = q.remove();
+			Node cur = q.poll();
 			
-			if(cur.id == end) return dist[cur.id];
 			if(dist[cur.id] > cur.limit) continue;
+			if(cur.id == end) 
+				return dist[cur.id];
 			
 			for(Node next : graph[cur.id]) {
-				int nextLimit = Math.min(cur.limit, next.limit);
-				if(dist[next.id]>= nextLimit) continue;
-				dist[next.id] = nextLimit;
-				q.add(new Node(next.id, dist[next.id]));
+				int nextCost = Math.min(dist[cur.id], next.limit);
+				if(dist[next.id] >= nextCost) continue; 
+				dist[next.id] = nextCost;
+				q.add(new Node(next.id, nextCost));
 				
 			}
 		}

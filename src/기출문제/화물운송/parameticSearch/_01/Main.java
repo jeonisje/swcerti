@@ -1,23 +1,23 @@
-package 기출문제.화물운송.dijkstra;
-
+package 기출문제.화물운송.parameticSearch._01;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
+
 class UserSolution {
-	final int MAX_LIMIT = 30_001;
-	int N, K;
 	
+	int N; 
 	ArrayList<Node>[] graph;
-	int[] dist;
+	
+	int[] visited;
+	int cc;
 	
 	public void init(int N, int K, int[] sCity, int[] eCity, int[] mLimit) {
 		this.N = N;
-		this.K = K;
 		
 		graph = new ArrayList[N];
 		for(int i=0; i<N; i++) {
@@ -25,9 +25,12 @@ class UserSolution {
 		}
 		
 		for(int i=0; i<K; i++) {
-			graph[sCity[i]].add(new Node(eCity[i], mLimit[i]));			
+			graph[sCity[i]].add(new Node(eCity[i], mLimit[i]));
 		}
-		dist = new int[N];
+		
+		visited = new int[N];
+		cc = 0;
+		
 		return;
 	}
 	
@@ -37,36 +40,48 @@ class UserSolution {
 	}
 
 	public int calculate(int sCity, int eCity) {
-		return dijkstra(sCity, eCity); 
-	}
-	
-	int dijkstra(int start, int end) {		
-		Arrays.fill(dist, 0);
+		int start = 1;
+		int end = 30_001;
 		
-		
-		PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o2.limit, o1.limit));
-		q.add(new Node(start, Integer.MAX_VALUE));
-		dist[start] = Integer.MAX_VALUE;
-		
-		while(!q.isEmpty()) {
-			Node cur = q.remove();
-			
-			if(cur.id == end) return dist[cur.id];
-			if(dist[cur.id] > cur.limit) continue;
-			
-			for(Node next : graph[cur.id]) {
-				int nextLimit = Math.min(cur.limit, next.limit);
-				if(dist[next.id]>= nextLimit) continue;
-				dist[next.id] = nextLimit;
-				q.add(new Node(next.id, dist[next.id]));
-				
+		boolean found = false;
+		while(start <= end) {
+			int mid = (start + end) / 2;
+			boolean ret = test(mid, sCity, eCity);
+			if(ret) {
+				found = true;
+				start = mid + 1;
+			} else {
+				end = mid - 1;
 			}
 		}
 		
-		return -1;
-		
+		return found ? end : -1;
 	}
 	
+	
+	
+	
+	boolean test(int target, int start, int end) {
+		cc++;
+		ArrayDeque<Node> q = new ArrayDeque<>();
+		q.add(new Node(start, 0));
+		visited[start] = cc;
+		while(!q.isEmpty()) {
+			Node cur = q.remove();
+			if(cur.id == end) return true;
+			for(Node next : graph[cur.id]) {
+				if(next.limit < target) continue;
+				
+				if(visited[next.id] == cc) continue;
+				q.add(next);
+				visited[next.id] = cc;
+			}
+		}
+		
+		
+		return false;
+	}
+
 	class Node {
 		int id;		
 		int limit;

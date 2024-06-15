@@ -5,22 +5,97 @@ import java.io.*;
 import java.util.*;
 
 class UserSolution {
+	int MAX = 15_001;	
+	int N;
+	
+	HashMap<Integer, Integer> idToSeq;	
+	PriorityQueue<Integer>[] pq;
+	
+	int[] cookingTimes;
+	int[] countByOrder;	// 주문별 음식 숫자
+	int[] statusByOrder; // 주문별 상태 관리
+	Cooking[] curCooking; // 주방별 현재 요리 중인 주문
+	
+	int sequnce;	
+	int orderCount;
+	
 	public void init(int N, int mCookingTimeList[]) {
+		this.N = N;
+		this.cookingTimes = mCookingTimeList;
+		idToSeq = new HashMap<>();
+		
+		pq = new PriorityQueue[N+1];
+		for(int i=0; i<N+1; i++) {
+			pq[i] = new PriorityQueue<>();
+		}
+		cookingTimes = new int[N+1];
+		for(int i=0; i<N; i++) {
+			cookingTimes[i+1] = mCookingTimeList[i];
+		}
+		
+		countByOrder = new int[MAX];
+		statusByOrder = new int[MAX];
+		
+		curCooking = new Cooking[N+1];
+		
+		sequnce = 0;
+		orderCount = 0;
+		
 		return;
 	}
-
+	// 15.000
 	public int order(int mTime, int mID, int M, int mDishes[]) {
-		return -1;
+		sequnce++;
+		idToSeq.put(mID, sequnce);
+		orderCount++;
+		
+		for(int i=0; i<M; i++) {
+			int dish = mDishes[i];
+			countByOrder[sequnce] = M;
+			
+			if(curCooking[i] == null) {
+				int finish = cookingTimes[dish] + mTime;
+				curCooking[i] = new Cooking(sequnce, finish);
+			} else {
+				pq[dish].add(sequnce);
+			}
+		}
+		
+		return orderCount;
 	}
-
+	
+	void passTime(int time) {
+		for(int i=1; i<N+1; i++) {
+			if(curCooking[i] == null) continue;
+			if(curCooking[i].finishTime >= time) {
+				int seq = curCooking[i].orderSeq;
+				countByOrder[seq]--;
+			}
+		}
+	}
+	
+	
+	// 500
 	public int cancel(int mTime, int mID) {
 		return -1;
 	}
-
+	
+	// 10,000
 	public int getStatus(int mTime, int mID) {
 		return -1;
 	}
+	
+	class Cooking {
+		int orderSeq;
+		int finishTime;
+		public Cooking(int orderSeq, int finishTime) {		
+			this.orderSeq = orderSeq;
+			this.finishTime = finishTime;
+		}
+	}
 }
+
+
 public class Main {
 	private final static int CMD_INIT = 100;
 	private final static int CMD_ORDER = 200;

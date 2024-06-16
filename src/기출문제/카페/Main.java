@@ -9,12 +9,14 @@ class UserSolution {
 	int N;
 	
 	HashMap<Integer, Integer> idToSeq;	
-	PriorityQueue<Integer>[] pq;
+	PriorityQueue<Integer>[] orderQ;	// 주문 대기
+	
 	
 	int[] cookingTimes;
-	int[] countByOrder;	// 주문별 음식 숫자
-	int[] statusByOrder; // 주문별 상태 관리
+	int[] statusByOrder; // 주문별 상태 관리		0: 완료, -1:취소 1..N : 남은 요리 수
 	Cooking[] curCooking; // 주방별 현재 요리 중인 주문
+	
+	int[] waitingServe;	// 서빙 대기
 	
 	int sequnce;	
 	int orderCount;
@@ -24,19 +26,18 @@ class UserSolution {
 		this.cookingTimes = mCookingTimeList;
 		idToSeq = new HashMap<>();
 		
-		pq = new PriorityQueue[N+1];
+		orderQ = new PriorityQueue[N+1];
 		for(int i=0; i<N+1; i++) {
-			pq[i] = new PriorityQueue<>();
+			orderQ[i] = new PriorityQueue<>();
 		}
 		cookingTimes = new int[N+1];
 		for(int i=0; i<N; i++) {
 			cookingTimes[i+1] = mCookingTimeList[i];
 		}
 		
-		countByOrder = new int[MAX];
-		statusByOrder = new int[MAX];
-		
+		statusByOrder = new int[MAX];		
 		curCooking = new Cooking[N+1];
+		waitingServe = new int[N+1];
 		
 		sequnce = 0;
 		orderCount = 0;
@@ -45,19 +46,20 @@ class UserSolution {
 	}
 	// 15.000
 	public int order(int mTime, int mID, int M, int mDishes[]) {
+		passTime(mTime);
+		
 		sequnce++;
 		idToSeq.put(mID, sequnce);
 		orderCount++;
 		
 		for(int i=0; i<M; i++) {
 			int dish = mDishes[i];
-			countByOrder[sequnce] = M;
-			
-			if(curCooking[i] == null) {
-				int finish = cookingTimes[dish] + mTime;
-				curCooking[i] = new Cooking(sequnce, finish);
+			statusByOrder[sequnce] = M;
+			if(curCooking[dish] == null) {
+				int finish = cookingTimes[dish] + mTime - 1;
+				curCooking[dish] = new Cooking(sequnce, finish);
 			} else {
-				pq[dish].add(sequnce);
+				orderQ[dish].add(sequnce);
 			}
 		}
 		
@@ -67,22 +69,79 @@ class UserSolution {
 	void passTime(int time) {
 		for(int i=1; i<N+1; i++) {
 			if(curCooking[i] == null) continue;
-			if(curCooking[i].finishTime >= time) {
-				int seq = curCooking[i].orderSeq;
-				countByOrder[seq]--;
+			if(curCooking[i].finishTime >= time) continue; 
+			// 요리 완료 시간이 지났다면 완료 처리
+			int seq = curCooking[i].orderSeq;
+			statusByOrder[seq]--;
+			waitingServe[i] = seq;
+			if(statusByOrder[seq] == 0) { 
+				orderCount--;
+				for(int k=1; k<N+1; k++) {
+					if(waitingServe[k] == seq) {
+						waitingServe[k]= 0;
+					}
+				}
 			}
+			
+			if(orderQ[i].isEmpty()) {
+				curCooking[i] = null;
+				continue;
+			}
+			int nextSeq = orderQ[i].remove();
+			curCooking[i] = new Cooking(nextSeq, cookingTimes[i] + time - 1);			
 		}
 	}
 	
 	
 	// 500
 	public int cancel(int mTime, int mID) {
-		return -1;
+		orderCount--;
+		
+		int seq = idToSeq.get(mID);
+		statusByOrder[seq] = -1;
+		// 서빙 대기중인 요리 확인
+		for(int i=1; i<N+1; i++) {
+			int cur = waitingServe[i];
+			if(cur == 0) continue;
+			if(cur != seq) continue;
+			if(orderQ[i].isEmpty()) {
+				curCooking[i] = null;
+				continue;
+			}
+			if(curCooking[i] == null) continue;
+			if(curCooking[i].finishTime > mTime) continue;
+			
+			
+			int nextSeq = orderQ[i].remove();			
+			curCooking[i].orderSeq = nextSeq;
+		}
+		
+		for(int i=1; i<N+1; i++) {
+			Cooking cur = curCooking[i];
+			if(cur == null) continue;
+			if(cur.orderSeq != seq) continue;
+			if(orderQ[i].isEmpty()) {
+				curCooking[i] = null;
+				continue;
+			}
+			int nextSeq = orderQ[i].remove();			
+			curCooking[i].orderSeq = nextSeq;
+		}
+		
+		
+		
+		passTime(mTime);
+		
+		
+		return orderCount;
 	}
 	
 	// 10,000
 	public int getStatus(int mTime, int mID) {
-		return -1;
+		passTime(mTime);
+		int seq = idToSeq.get(mID);
+		
+		return statusByOrder[seq];
 	}
 	
 	class Cooking {
@@ -133,7 +192,7 @@ public class Main {
 					mDishes[k] = Integer.parseInt(st.nextToken());
 				ans = Integer.parseInt(st.nextToken());
 				ret = usersolution.order(mTime, mID, M, mDishes);
-				print(q, "order", ans, ret, mTime, mID, M, mDishes);
+				print(q, "order", ans, ret,  mTime, mID, M, mDishes);
 				if (ret != ans)
 					okay = false;
 				break;

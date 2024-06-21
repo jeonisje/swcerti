@@ -1,4 +1,4 @@
-package 기출문제.호텔방문;
+package 기출문제.호텔방문._01;
 
 
 import java.io.BufferedReader;
@@ -10,34 +10,56 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 class UserSolution {
-	int MAX_BRAND = 50;
-	int MAX_CONNECT = 20_000; 
 	
+	int MAX_BRAND = 50;	
 	int N;
-
-	int[] parent;
 	
+	//ArrayList<Integer>[] hotelByBrand;
 	ArrayList<Node>[] graph;
-	int[] countByBrand;	
-	int[] hotelByBrand;
+	ArrayList<Node>[][] graphByBrand;
+	
+	int[] brandByHotel;
+	int[] countByBrand;
+	
+	int[] parent;
+	int[] dist;
+	
 	
 	void init(int N, int[] mBrands) {
 		this.N = N;
-		parent = new int[MAX_BRAND];
-		countByBrand = new int[MAX_BRAND];
-		hotelByBrand = new int[N];
 		
-		graph = new ArrayList[N];
-		for(int i=0; i<N; i++) {
-			graph[i] = new ArrayList<>();
-			hotelByBrand[i] = mBrands[i];
-		}
+		//hotelByBrand = new ArrayList[MAX_BRAND];
 		
 		for(int i=0; i<MAX_BRAND; i++) {
-			parent[i] = i;
-			countByBrand[mBrands[i]] += 1;
+			//hotelByBrand[i] = new ArrayList<>();
+			
 		}
 		
+		brandByHotel = mBrands;
+		graph = new ArrayList[N];
+		for(int i=0; i<N; i++) {
+			graph[i] = new ArrayList<>();			
+		}
+		
+		parent = new int[MAX_BRAND];
+		
+		for(int i=0; i<MAX_BRAND; i++) {
+			parent[i] = i;		
+		}
+		dist = new int[N+1];
+		countByBrand = new int[MAX_BRAND];
+		for(int i=0; i<N; i++) {
+			//hotelByBrand[mBrands[i]].add(i);
+			countByBrand[mBrands[i]]++;
+		}
+		
+		return;
+	}
+	
+	// 10_000
+	void connect(int mHotelA, int mHotelB, int mDistance) {		
+		graph[mHotelA].add(new Node(mHotelB, mDistance));
+		graph[mHotelB].add(new Node(mHotelA, mDistance));
 		return;
 	}
 	
@@ -46,81 +68,89 @@ class UserSolution {
 		return parent[a] = find(parent[a]);
 	}
 	
-	void union (int a, int b) {
+	void union(int a, int b) {
 		int pa = find(a);
 		int pb = find(b);
 		
 		if(pa == pb) return;
 		
-		countByBrand[pa] += countByBrand[pb];
 		parent[pb] = pa;
+		//hotelByBrand[pa].addAll(hotelByBrand[pb]);		 
+		countByBrand[pa] += countByBrand[pb];
 	}
-	void connect(int mHotelA, int mHotelB, int mDistance) {
-		graph[mHotelA].add(new Node(mHotelB, mDistance));
-		graph[mHotelB].add(new Node(mHotelA, mDistance));
-		return; 
-	}
-
+	
+	
+	// 100
 	int merge(int mHotelA, int mHotelB) {
-		int brandA = hotelByBrand[mHotelA];
-		int brandB = hotelByBrand[mHotelB];
+		//union()
+		int brandA = brandByHotel[mHotelA];
+		int brandB = brandByHotel[mHotelB];
+		
 		union(brandA, brandB);
-		int pId = find(brandA);
-		return countByBrand[pId];
+		
+		int pa = find(brandA);
+		
+		return countByBrand[pa];
 	}
 
+	// 1_000
 	int move(int mStart, int mBrandA, int mBrandB) {
-		int totalDistance = 0;
-		int pBrandA = find(mBrandA);
-		int pBrandB = find(mBrandB);
-	
-		if(pBrandA == pBrandB) {
-			for(int i=0; i<N; i++) {
-				if(find(hotelByBrand[i]) == pBrandA) {
-					
-				}
-			}
-		}
-		int brandA = find(mBrandA);
-		int brandB = find(mBrandB);
+		int pa = find(mBrandA);
+		int pb = find(mBrandB);
 		
-		return totalDistance;
+		int ans1 = 0;
+		int ans2 = 0;
+		
+		if(pa == pb) {			
+			Node ret1 = dijkstra(mStart, pa, -1);
+			Node ret2 = dijkstra(mStart, pa, ret1.id);
+			ans1 = ret1.dist;
+			ans2 = ret2.dist;
+			return ans1 + ans2; 
+		}
+		
+		Node ret1  = dijkstra(mStart, pa, -1);
+		Node ret2  = dijkstra(mStart, pb, -1);
+		
+		return ret1.dist + ret2.dist;
 	}
 	
-	int dijkstra(int start, int target) {
-		
-		
-		int[] dist = new int[N+1];
+	Node dijkstra(int start, int brand, int skip) {
 		Arrays.fill(dist, Integer.MAX_VALUE);
 		
-		PriorityQueue<Node> q = new PriorityQueue<Node>((o1, o2) -> Integer.compare(o1.distance, o2.distance));
+		PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.dist, o2.dist));
 		q.add(new Node(start, 0));
-		dist[0] = 0;
+		dist[start] = 0;
 		
 		while(!q.isEmpty()) {
-			Node cur = q.poll();
-			if(cur.id == target) {
-				return dist[cur.id];
+			Node cur = q.remove();
+			
+			int pBrand = find(brandByHotel[cur.id]);
+			if(pBrand == brand) {
+				if(cur.id != skip && cur.id != start)
+					return new Node(cur.id, dist[cur.id]);
 			}
-			for(Node next : graph[cur.id]) {
-				int nextDistance = cur.distance + next.distance;				
-				if(dist[next.id] <= nextDistance) continue;
-				dist[next.id] = nextDistance;
+			for(Node next : graph[cur.id]) {				
+				int nextCost = cur.dist + next.dist;
+				if(dist[next.id] <= nextCost) continue;
+				dist[next.id] = nextCost;
 				q.add(new Node(next.id, dist[next.id]));
 			}
 		}
 		
-		return -1;
+		return new Node(0, 0);
 	}
 	
 	class Node {
 		int id;
-		int distance;
-		public Node(int id, int distance) {		
+		int dist;
+		
+		public Node(int id, int dist) {		
 			this.id = id;
-			this.distance = distance;
-		}
+			this.dist = dist;
+		}	
 	}
+	
 }
 
 
@@ -200,14 +230,14 @@ public class Main {
 	}
 	
 	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret) System.err.println("====================오류========================");
-		System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
+		//if(ans!=ret) System.err.println("====================오류========================");
+		//System.out.println("[" + q +"] " + cmd + " " + ans + "=" + ret + "[" + Arrays.deepToString(o)+ "]" );
 	}
 
 	public static void main(String[] args) throws Exception {
 		
 		Long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C://sw certi//workspace//swcerti//src//기출문제//호텔방문//sample_input3.txt"));
+		System.setIn(new java.io.FileInputStream("C://sw certi//workspace//swcerti//src//기출문제//호텔방문//sample_input.txt"));
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer stinit = new StringTokenizer(br.readLine(), " ");

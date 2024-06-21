@@ -128,7 +128,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		// System.setIn(new java.io.FileInputStream("res/sample_input.txt"));
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\단어암기장\\sample_input.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\단어암기장\\sample_input3.txt"));
 
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

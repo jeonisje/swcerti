@@ -1,4 +1,4 @@
-package 기출문제.물류허브._01;
+package 기출문제.물류허브._02;
 
 import java.io.*;
 import java.util.*;
@@ -8,22 +8,23 @@ class UserSolution {
 	int MAX = 3_001;	
 	HashMap<Integer, Integer> idToSeq;
 	
-	ArrayList<Node>[] graph;
+	ArrayList<Node>[] graph1;
+	ArrayList<Node>[] graph2;
 	int[] dist;
-	int[][] costMap;
 	
 	int sequence;
 	
 	public int init(int N, int[] sCity, int[] eCity, int[]mCost) {
 		
 		idToSeq = new HashMap<>();
-		graph = new ArrayList[MAX];
+		graph1 = new ArrayList[MAX];
+		graph2 = new ArrayList[MAX];
 		for(int i=0; i<MAX; i++) {
-			graph[i] = new ArrayList<>();
+			graph1[i] = new ArrayList<>();
+			graph2[i] = new ArrayList<>();
 		}
 		
 		dist = new int[MAX];
-		costMap = new int[MAX][MAX];
 		sequence = 0;
 		
 		for(int i=0; i<N; i++) {
@@ -45,17 +46,10 @@ class UserSolution {
 				idToSeq.put(eCity[i], sequence);
 			}
 			
-			graph[from].add(new Node(to, mCost[i]));
+			graph1[from].add(new Node(to, mCost[i]));
+			graph2[to].add(new Node(from, mCost[i]));
 		}
 		
-		for(int start=1; start<=sequence; start++) {
-			dijkstra(start);
-			/*
-			for(int end=1; end<=sequence; end++) {   
-				if(dist[end] == Integer.MAX_VALUE) continue;
-				costMap[start][end] = dist[end];
-			}*/
-		}
 		
 		
 		return idToSeq.size();
@@ -80,64 +74,41 @@ class UserSolution {
 			idToSeq.put(eCity, sequence);
 		}
 		
-		graph[from].add(new Node(to, mCost));
-		dijkstra(from);
-		dijkstra(to);
+		graph1[from].add(new Node(to, mCost));
+		graph2[to].add(new Node(from, mCost));
+		
 		return; 
 	}
 	
 	public int cost(int mHub) {
 		int start = idToSeq.get(mHub);
 		
-		
-		
-		//int cost = dijkstra2(start);
-		
 		int cost = 0;
-		
-		for(int i=1; i<=sequence; i++) {			
-			if(i == start) continue;
-			if(costMap[start][i] == Integer.MAX_VALUE) continue;
-			cost += costMap[start][i];
-			cost += costMap[i][start];
-			
+		dijkstra(graph1, start);
+		for(int i=0; i<=sequence; i++) {
+			if(dist[i] == Integer.MAX_VALUE) continue;
+			cost += dist[i];
 		}
 		
+		dijkstra(graph2, start);
+		for(int i=0; i<=sequence; i++) {
+			if(dist[i] == Integer.MAX_VALUE) continue;
+			cost += dist[i];
+		}
 		
 		return cost; 
 	}
 	
-	void dijkstra(int start) {
-		Arrays.fill(costMap[start], Integer.MAX_VALUE);
-		PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.cost, o2.cost));
-		q.add(new Node(start, 0));
-		costMap[start][start] = 0;
-		
-		while(!q.isEmpty()) {
-			Node cur = q.remove();
-			
-			if(costMap[start][cur.id] < cur.cost) continue;
-			for(Node next : graph[cur.id]) {
-				int nextCost = cur.cost + next.cost;
-				if(costMap[start][next.id] <= nextCost) continue;
-				costMap[start][next.id] = nextCost;
-				q.add(new Node(next.id, costMap[start][next.id]));
-			}
-		}
-	}
 	
-	int dijkstra2(int start) {
-		int cost = 0;
+	void dijkstra(ArrayList<Node>[] graph, int start) {
 		Arrays.fill(dist, Integer.MAX_VALUE);
 		PriorityQueue<Node> q = new PriorityQueue<>((o1, o2) -> Integer.compare(o1.cost, o2.cost));
 		q.add(new Node(start, 0));
 		dist[start] = 0;
 		
 		while(!q.isEmpty()) {
-			Node cur = q.remove();			
-			if(dist[cur.id] < cur.cost) continue;
-			
-			cost += dist[cur.id];
+			Node cur = q.remove();		
+			if(dist[cur.id] < cur.cost) continue;	
 			
 			for(Node next : graph[cur.id]) {
 				int nextCost = cur.cost + next.cost;
@@ -147,7 +118,7 @@ class UserSolution {
 			}
 		}
 		
-		return cost;
+		
 	}
 	
 	
@@ -228,12 +199,12 @@ public class Main {
 		return isCorrect;
 	}
 	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret) System.err.println("----------------------오류--------------------");
-		System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
+		//if(ans!=ret) System.err.println("----------------------오류--------------------");
+		//System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
 	}
 	public static void main(String[] args) throws Exception {
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\물류허브\\sample_input3.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\물류허브\\sample_input.txt"));
 		
 		
 		int TC, MARK;

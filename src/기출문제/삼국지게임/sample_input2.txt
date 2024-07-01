@@ -1,0 +1,37 @@
+1 100
+35
+100 4 12 5 12 9 9 12 14 11 9 6 15 10 5 7 11 10 mA mB mC mD mE mF mG mH mJ mK mP mQ mR mT mU mX 
+300 mA mG 1
+300 mK mG 1
+500 mK 3 0 9
+500 mA 6 1 53
+300 mP mX 1
+400 mA mK ganada -1
+400 mA mX gaboja -2
+400 mA mP chacha 0
+500 mX 10 1 28
+400 mP mU igija 1
+300 igija mA -2
+300 mR mT 1
+300 mE mF 1
+500 igija 10 0 12
+400 mT igija jjukkumi 0
+300 mD mH 1
+300 mQ mD 1
+300 mB mX 1
+400 mD mC holro 0
+300 mJ mC 1
+300 mH mJ -2
+300 mF mJ 1
+500 mP 10 1 69
+500 mR 20 0 25
+500 mF 7 1 61
+300 mE mC -1
+400 mC mK biribiri 1
+300 biribiri mA -2
+300 mD mA 1
+500 mG 20 1 144
+500 biribiri 22 0 34
+500 mF 24 0 34
+400 mJ mP nono 0
+400 mB mH noway 0

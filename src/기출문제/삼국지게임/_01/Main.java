@@ -1,49 +1,41 @@
-package 기출문제.삼국지게임;
+package 기출문제.삼국지게임._01;
 
 import java.io.*;
 import java.util.*; 
 
 class UserSolution {
 	int N;
-	int soldierCount;
+	int totalCount;
 	int[] parent;
 	int[] countBySoldier;
-	String[] nameBySoldier;
 	HashMap<String, Integer> nameToId;
 	
 	HashSet<Integer>[] enermies;
-	HashSet<Integer>[] allies;
 	
-	int[][] map;
 	int[] directY = {-1, -1, -1, 0, 0, 1, 1, 1};
 	int[] directX = {-1, 0, 1, -1, 1, -1, 0, 1};
 	
 	public void init(int N, int[][] soldier, char[][][] monarch) {
 		this.N = N;
-		soldierCount = N * N + 1;
-		parent = new int[soldierCount];
-		enermies = new HashSet[soldierCount];
-		allies = new HashSet[soldierCount];
+		totalCount = N * N  * 2 + 1;
+		parent = new int[totalCount];
+		enermies = new HashSet[totalCount];
 		
-		for(int i=1; i< soldierCount; i++) {
-			parent[i] = i;
-			enermies[i] = new HashSet<>();
-			allies[i] = new HashSet<>();
-			allies[i].add(i);
+		for(int i=1; i< totalCount; i++) {
+			enermies[i] = new HashSet<>();			
 		}
-		countBySoldier = new int[soldierCount];
-		nameBySoldier = new String[soldierCount];
+		countBySoldier = new int[totalCount];
 		nameToId = new HashMap<>();
-		map = new int[N][N];
+		
 		
 		for(int i=0; i<N; i++) {
 			for(int j=0; j<N; j++) {
 				int idx = i * N + j + 1;
 				countBySoldier[idx] = soldier[i][j];
 				String name = String.valueOf(monarch[i][j]);
-				nameBySoldier[idx] = name;
 				nameToId.put(name, idx);
-				map[i][j] = idx;
+				parent[idx] = idx + N * N;
+				parent[idx + N * N ] = idx + N * N;				
 			}
 		}
 		
@@ -62,19 +54,8 @@ class UserSolution {
 		int pb = find(b);
 		
 		if(pa == pb) return  -1;		
-		//if(enermies[pa].contains(pb)) return -2;
-		//if(enermies[pb].contains(pa)) return -2;
-		
-		for(int idx : enermies[pa]) {			
-			//if(allies[pb].contains(idx)) return -2;
-			int pid = find(idx);
-			if(pid == pb) return -2;
-		}
-
-		for(int idx : enermies[pb]) {			
-			int pid = find(idx);
-			if(pid == pa) return -2;
-		}
+		if(enermies[pa].contains(pb)) return -2;
+		if(enermies[pb].contains(pa)) return -2;
 		
 		union(a, b);
 		
@@ -92,42 +73,38 @@ class UserSolution {
 		if(pa == pb) 
 			return  -1;		
 		boolean found = false;
-		int eRow = -1;
-		int eCol = -1;
-		for(Integer idx : allies[pa]) {
-			int row = (idx - 1) / N;
-			int col = (idx - 1) % N;
-			
-			for(int i=0; i<8; i++) {
-				int nr = row + directY[i];
-				int nc = col + directX[i];
-				if(nr < 0 || nc < 0 || nr >= N || nc >= N) continue;
-				
-				//int pid = find(map[nr][nc]);
-				
-				if(map[nr][nc] == b) {
-					eRow = nr;
-					eCol = nc;
-					found = true;
-					break;
-				}
-			}
-		}
 		
+		int row = (b - 1) / N;
+		int col = (b - 1) % N;	
+			
+		for(int i=0; i<8; i++) {
+			int nr = row + directY[i];
+			int nc = col + directX[i];
+			if(nr < 0 || nc < 0 || nr >= N || nc >= N) continue;
+			
+			int idx = nr * N + nc + 1;
+			int pid = find(idx);
+			
+			if(pid == pa) {				
+				found = true;
+				break;
+			}
+			
+		}	
 		if(!found) return -2;
 		
-		enermies[pa].addAll(allies[pb]);
-		enermies[pb].addAll(allies[pa]);
+		enermies[pa].add(pb);
+		enermies[pb].add(pa);
 		
 		int countA = 0;
 		int countB = countBySoldier[b];
 		
 		for(int i=0; i<8; i++) {
-			int nr = eRow + directY[i];
-			int nc = eCol + directX[i];
+			int nr = row + directY[i];
+			int nc = col + directX[i];
 			if(nr < 0 || nc < 0 || nr >= N || nc >= N) continue;
 			
-			int idx = map[nr][nc];
+			int idx = nr * N + nc + 1;
 			int pid = find(idx);
 			
 			if(pid == pa) {
@@ -137,8 +114,6 @@ class UserSolution {
 				countB += countBySoldier[idx] / 2;
 				countBySoldier[idx] -= countBySoldier[idx] / 2;
 			}
-			
-			
 		}
 		
 		int diff = countA - countB;
@@ -148,51 +123,12 @@ class UserSolution {
 		}
 		
 		nameToId.remove(String.valueOf(monarchB));
-		if(b == pb && allies[pb].size() != 1) {
-			int newP = 0;
-			for(int idx : allies[pb]) {
-				if(idx == b) continue;
-				if(newP == 0) newP = idx;
-				parent[idx] = newP;
-			}
-			
-			allies[newP] = new HashSet<>();
-			enermies[newP] = new HashSet<>();
-			allies[newP].addAll(allies[pb]);
-			enermies[newP].addAll(enermies[pb]);
-			pb = newP;
-		}
-		
-		for(int idx : enermies[pb]) {
-			enermies[idx].remove(b);
-		}
-		
-		for(int idx : allies[b]) {
-			if(idx == b) continue;
-			parent[idx] = pb;			
-		}
-		
-		
-		// 적 관계 리셋
-		enermies[pa].remove(b);
-		//enermies[a].remove(b);
-		enermies[b] = new HashSet<>();
-		//enermies[b].add(a);
-		//enermies[b].addAll(enermies[pa]);
-		
-		// 동맹관계 리셋
-		allies[pb].remove(b);
-		allies[b] = new HashSet<>();
-		allies[b].add(b);
-		parent[b] = pa;
-		allies[pa].add(b);
-		if(pb != b)
-			enermies[pb].add(b);
 		
 		String name = String.valueOf(general);
-		nameBySoldier[b] = name;
 		nameToId.put(name, b);
 		countBySoldier[b] = diff;
+		parent[b] = pa;
+		
 		
 		return 1; 
 	}
@@ -207,9 +143,14 @@ class UserSolution {
 		
 		int pa = find(a);
 		int total = 0;
-		for(Integer idx : allies[pa]) {
-			countBySoldier[idx] +=  num;
-			total += countBySoldier[idx];
+		
+		for(int i=0; i<N; i++) {
+			for(int j=0; j<N; j++) {
+				int idx = i * N + j + 1;
+				if(pa != find(idx)) continue;
+				countBySoldier[idx] += num;
+				total += countBySoldier[idx];
+			}
 		}
 		
 		return total; 
@@ -225,33 +166,14 @@ class UserSolution {
 		int pb = find(b);
 		
 		if(pa == pb) return;
+		parent[pb] = pa;	
 		
-		
-		if(allies[pa].size() >= allies[pb].size()) {
-			parent[pb] = pa;
-			allies[pa].addAll(allies[pb]);
-			allies[pa].add(pb);
-			enermies[pa].addAll(enermies[pb]);
-			enermies[pb].addAll(enermies[pa]);
-		} else {
-			parent[pa] = pb;
-			allies[pb].addAll(allies[pa]);
-			allies[pb].add(pa);
-			enermies[pb].addAll(enermies[pa]);
-			enermies[pa].addAll(enermies[pb]);
+		for(int idx : enermies[pb]) {
+			int pId = find(idx);
+			if(enermies[pa].contains(pId)) continue;
+			enermies[pa].add(pId);
+			enermies[pId].add(pa);
 		}
-	}
-	
-	class Node {
-		int id;
-		int row;
-		int col;
-		public Node(int id, int row, int col) {		
-			this.id = id;
-			this.row = row;
-			this.col = col;
-		}
-		
 	}
 }
 
@@ -341,13 +263,13 @@ public class Main {
 	}
 	
 	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret) System.err.println("----------------------오류--------------------");
-		System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
+		//if(ans!=ret) System.err.println("----------------------오류--------------------");
+		//System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
 	}
 
 	public static void main(String[] args) throws IOException {
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\삼국지게임\\sample_input5.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\삼국지게임\\sample_input.txt"));
 		
 		br = new BufferedReader(new InputStreamReader(System.in));
 		

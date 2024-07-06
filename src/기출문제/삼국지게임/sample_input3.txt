@@ -1,0 +1,63 @@
+1 100
+61
+100 5 9 5 11 12 8 11 11 14 10 10 9 6 14 7 7 12 13 13 9 11 13 5 14 14 13 caopi zhugeliang zhangliao gongsunzan zhugeke liubei caozhi dengzhi chengong sunquan jiangwei wangping guanyu ganning machao luxun taoqian pangtong liushan yuanshu yuejin simayi chengpu liuzhang lusu 
+500 taoqian 15 0 28
+500 zhangliao 15 0 26
+500 chengpu 14 0 28
+500 yuejin 7 1 20
+400 sunquan machao vtzayud 0
+300 wangping pangtong 1
+400 chengpu yuejin qahkvq -2
+300 yuejin taoqian 1
+500 chengpu 11 0 39
+500 liushan 12 0 21
+400 pangtong sunquan nmyhs -2
+300 lusu liushan 1
+400 yuejin wangping rwltqgvn 1
+300 zhugeliang liushan 1
+500 jiangwei 19 0 28
+500 jiangwei 8 1 36
+400 taoqian yuejin okdx -1
+400 chengpu taoqian jxxrqagv 0
+500 machao 14 0 16
+500 machao 13 0 29
+300 caopi liuzhang 1
+500 yuejin 7 1 38
+500 liubei 7 1 18
+300 liuzhang chengpu 1
+400 yuejin simayi mzxou 1
+300 liuzhang zhugeliang 1
+500 yuejin 6 1 57
+500 lusu 14 0 27
+400 chengong zhugeke iyimqpmwrp 0
+500 chengpu 6 1 132
+300 zhangliao jiangwei 1
+300 sunquan chengong 1
+500 caozhi 17 0 28
+500 caopi 9 1 186
+400 liushan yuanshu klad 1
+400 caopi dengzhi nopknwh 0
+500 jiangwei 5 1 72
+400 guanyu caopi xpfjb -2
+300 klad jiangwei 1
+300 dengzhi lusu -2
+500 liushan 6 1 291
+500 klad 19 0 67
+400 jiangwei zhugeliang fqtzpb -1
+500 lusu 7 1 373
+500 jiangwei 17 0 71
+500 jiangwei 11 0 82
+400 liubei guanyu qbwdroo -2
+500 caopi 18 0 55
+500 machao 19 0 48
+400 liubei zhangliao ybdjhma -2
+500 taoqian 19 0 32
+500 sunquan 5 1 20
+400 liuzhang guanyu amromt 1
+500 caozhi 17 0 45
+300 luxun zhugeliang 1
+400 luxun jiangwei okzm -1
+400 caozhi zhugeliang wtoczrpamm 0
+400 mzxou liushan gegpyloxvw -2
+500 liuzhang 11 0 39
+500 sunquan 9 1 38

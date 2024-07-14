@@ -6,21 +6,15 @@ import java.util.*;
 class UserSolution {
 	int MAX = 100_001;
 	HashMap<Integer, TreeSet<RentCar>> searchMap;
-	ArrayList<RentCar>[] idByCompany;
-	//int[] priceByCar;
-	//int[] limitByCar;
-	
+	ArrayList<RentCar>[] idByCompany;	
 
 	public void init(int N) {
 		searchMap = new HashMap<>();
 		idByCompany = new ArrayList[N+1];
 		
-		for(int i=0; i<N+1; i++) {
+		for(int i=1; i<N+1; i++) {
 			idByCompany[i] = new ArrayList<>();
 		}
-		
-		//priceByCar =  new int[MAX];
-		//limitByCar =  new int[MAX];
 		
 		return;
 	}
@@ -35,8 +29,6 @@ class UserSolution {
 		tset.add(rc);
 		searchMap.put(key, tset);
 		
-		//limitByCar[mCarID] = mCarInfo[4];
-		//priceByCar[mCarID] = mCarInfo[5];
 		idByCompany[mCompanyID].add(rc);
 		
 		return;
@@ -49,17 +41,18 @@ class UserSolution {
 		if(!searchMap.containsKey(key)) return -1;
 		
 		TreeSet<RentCar> tset = searchMap.get(key);
+		/*
 		while(!tset.isEmpty()) {
 			RentCar rc = tset.first();
-			if(priceByCar[rc.id] != rc.price || limitByCar[rc.id] == 0 ||  rc.price == 0) {
+			if(rc.limit == 0 ||  rc.price == 0) {
 				tset.pollFirst();
 				continue;
 			}			
 			break;
-		}
+		}*/
 		
 		for(RentCar rc : tset) {
-			
+			if(rc.limit == 0 ||  rc.price == 0) continue;
 			Integer date1 = rc.rented.floorKey(mCondition[0]);
 			Integer date2 = rc.rented.ceilingKey(mCondition[0]);			
 			
@@ -67,7 +60,8 @@ class UserSolution {
 			if(date2 != null && date2 < mCondition[1]) continue;
 			
 			rc.rented.put(mCondition[0], mCondition[1]);
-			limitByCar[rc.id]--;
+			rc.limit--;
+			if(rc.limit == 0) tset.remove(rc);
 			return rc.id;
 		}
 		
@@ -78,7 +72,7 @@ class UserSolution {
 		int sum = 0;
 		for(RentCar rc : idByCompany[mCompanyID]) {
 			if(rc.price == 0) continue;
-			if(limitByCar[rc.id] == 0) continue;
+			if(rc.limit == 0) continue;
 			
 			TreeSet<RentCar> tset = searchMap.get(rc.hashcode);
 			tset.remove(rc);
@@ -90,10 +84,10 @@ class UserSolution {
 			}
 		
 			sum += rc.price;	
-			priceByCar[rc.id] = rc.price;
+
 			tset.add(rc);
 			
-			searchMap.put(rc.hashcode, tset);
+			//searchMap.put(rc.hashcode, tset);
 		}
 		
 		return sum;

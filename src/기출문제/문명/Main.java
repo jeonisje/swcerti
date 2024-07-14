@@ -4,7 +4,6 @@ package 기출문제.문명;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -27,8 +26,6 @@ class UserSolution {
 	
 	int sequence;
 	
-	Civil[] civilInfo;
-	
 	int find(int a) {
 		if(parent[a] == a) return a;
 		return parent[a] = find(parent[a]);
@@ -41,19 +38,8 @@ class UserSolution {
 		if(pa == pb) return;
 		parent[pb] = pa;		
 		countBySeq[pa] += countBySeq[pb];
-		idToSeq.remove(b);
-		idToSeq.remove(pb);
-		
-		ArrayList<Loc> locA = civilInfo[pa].locations;
-		ArrayList<Loc> locB = civilInfo[pb].locations;
-		
-		if(locA.size() < locB.size()) {
-			locB.addAll(locA);
-			civilInfo[pa].locations = locB;
-		} else {
-			locA.addAll(locB);
-			civilInfo[pa].locations = locA;
-		}		
+		idToSeq.remove(seqToId[b]);
+		idToSeq.remove(seqToId[pb]);		
 	}
 	
 	void init(int N) {
@@ -65,9 +51,7 @@ class UserSolution {
 		seqToId = new int[MAX];		
 		parent = new int[MAX];
 		countBySeq = new int[MAX];
-		removed = new int[MAX];
-		
-		civilInfo = new Civil[MAX];
+		removed = new int[MAX];		
 		
 		for(int i=0; i<MAX; i++) {
 			parent[i] = i;
@@ -105,12 +89,6 @@ class UserSolution {
 			int pseq = find(seq);
 			
 			map[r][c] = pseq;
-			if(civilInfo[pseq] == null) {
-				civilInfo[pseq] = new Civil(mID, pseq, new ArrayList<>(Arrays.asList(new Loc(r, c))));
-			} else {
-				civilInfo[pseq].locations.add(new Loc(r, c));
-			}
-			
 			return mID;
 		} 
 			
@@ -135,12 +113,6 @@ class UserSolution {
 		
 		map[r][c] = idToSeq.get(maxId);
 		countBySeq[maxSeq]++;
-		
-		if(civilInfo[maxSeq] == null) {
-			civilInfo[maxSeq] = new Civil(mID, maxSeq, new ArrayList<>(Arrays.asList(new Loc(r, c))));
-		} else {
-			civilInfo[maxSeq].locations.add(new Loc(r, c));
-		}
 		
 		return maxId;
 	}
@@ -168,10 +140,6 @@ class UserSolution {
 		if(removed[pseq] == 1) return 0;
 		removed[pseq] = 1;	
 		idToSeq.remove(mID);
-		
-		for(Loc loc : civilInfo[pseq].locations) {
-			map[loc.row][loc.col] = 0;
-		}
 		
 		return countBySeq[pseq];
 	}
@@ -317,15 +285,15 @@ public class Main
 	}
 	
 	static void print(int q, String cmd, int ans, int ret, Object...o) {
-		if(ans!=ret) System.err.println("----------------------오류--------------------");
-		System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
+		//if(ans!=ret) System.err.println("----------------------오류--------------------");
+		//System.out.println("["+q+"] " +  cmd + ":" + ans + "=" + ret + "(" + Arrays.deepToString(o)+")");
 	}
 
 
 	public static void main(String[] args) throws Exception
 	{
 		long start = System.currentTimeMillis();
-		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\문명\\sample_input3.txt"));
+		System.setIn(new java.io.FileInputStream("C:\\sw certi\\workspace\\swcerti\\src\\기출문제\\문명\\sample_input.txt"));
 		
 		
 		int TC, MARK;

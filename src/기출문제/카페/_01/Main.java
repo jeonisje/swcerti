@@ -20,6 +20,8 @@ class UserSolution {
 	int[] statusByOrder; // 주문별 상태 관리		0: 완료, -1:취소 1..N : 남은 요리 수	
 	int[] finishByCooking;	// 요리별 종료시간
 	
+	int[][] cookingStatus;	// 주문별 요리별 상태 0: 대기 , 1: 요리 중, 2: 완성	
+	
 	int sequnce;	
 	int orderCount;
 	
@@ -45,7 +47,9 @@ class UserSolution {
 		
 		statusByOrder = new int[MAX];	
 		finishByCooking = new int[N+1];
-		Arrays.fill(finishByCooking, -1);
+		Arrays.fill(finishByCooking, -1);		
+	
+		cookingStatus = new int[MAX][N+1];
 		
 		sequnce = 0;
 		orderCount = 0;
@@ -65,33 +69,28 @@ class UserSolution {
 			statusByOrder[sequnce] = M;
 			cookingQ[dish].add(sequnce);
 			
-			if(finishByCooking[dish] != -1) continue;
+			if(finishByCooking[dish] != -1) {				
+				continue;
+			}
 			
 			int finish = cookingTimes[dish] + mTime;
 			finishByCooking[dish] = finish;
-			 
+			cookingStatus[sequnce][i] = 1;
 		}
-		
 		return orderCount;
 	}
 	
 	void passTime(int time) {
 		for(int i=1; i<N+1; i++) {
 			if(cookingQ[i].isEmpty()) continue;
-			if(finishByCooking[i] >= time) continue;
-			int seq = cookingQ[i].remove();
+			if(finishByCooking[i] > time) continue;
 			
+			int seq = cookingQ[i].remove();
+			serveingQ[i].add(seq);
 			statusByOrder[seq]--;
 			if(statusByOrder[seq] == 0) {
 				// 전체 요리 완성
-				orderCount--;
-				for(int k=1; k<N+1; k++) {
-					if(!serveingQ[k].isEmpty() && serveingQ[k].peek() == seq) {
-						serveingQ[k].remove();
-					} else {
-						serveingQ[k].add(seq);
-					}
-				} 
+				complete(seq);
 			}
 			
 			if(cookingQ[i].isEmpty()) {
@@ -113,29 +112,61 @@ class UserSolution {
 		statusByOrder[seq] = -1;
 		// 서빙 대기중인 요리 확인
 		for(int i=1; i<N+1; i++) {
+			if(cookingQ[i].isEmpty()) continue;
 			if(cookingQ[i].peek() != seq) continue;
 			
-			cookingQ[i].remove();
-			if(cookingQ[i].isEmpty()) {
-				if(serveingQ[i].isEmpty()) continue;				
-				if(serveingQ[i].peek() != seq) continue;
-				serveingQ[i].remove();
-				continue;
-			}
-			
-			int nextSeq = cookingQ[i].peek();
-			int finish = cookingTimes[i] + mTime;
-			if(finishByCooking[i] <= finish) {
+			while(!cookingQ[i].isEmpty()) {
 				cookingQ[i].remove();
-				statusByOrder[nextSeq]--;
-				serveingQ[i].add(nextSeq);
-			}			
+				if(cookingQ[i].isEmpty()) {
+					finishByCooking[i] = -1;
+					if(serveingQ[i].isEmpty()) continue;				
+					if(serveingQ[i].peek() != seq) continue;
+					serveingQ[i].remove();
+					continue;
+				}
+				
+				int nextSeq = cookingQ[i].peek();
+				if(statusByOrder[nextSeq] == -1) {
+					cookingQ[i].remove();
+					continue;
+				}
+				
+				if(serveingQ[i].isEmpty()) break;
+				
+				if(finishByCooking[i] > mTime) {
+					cookingQ[i].remove();
+					statusByOrder[nextSeq]--;
+					
+					if(statusByOrder[nextSeq] == 0) {
+						// 전체 요리 완성
+						complete(nextSeq);
+					} else {
+						serveingQ[i].add(nextSeq);
+					}
+					
+					
+					
+				}
+				
+				break;
+			}
+					
 		}
 		
 		passTime(mTime);
 		
 		
 		return orderCount;
+	}
+	
+	void complete(int seq) {
+		orderCount--;		
+		for(int k=1; k<N+1; k++) {
+			if(serveingQ[k].isEmpty()) continue;
+			if(serveingQ[k].peek() == seq) {
+				serveingQ[k].remove();
+			} 
+		} 
 	}
 	
 	// 10,000

@@ -1,14 +1,15 @@
-package 기출문제.렌터카조회;
+package 기출문제.렌터카조회._02;
 
 import java.io.*;
 import java.util.*;
 
 class UserSolution {
 	int MAX = 100_001;
-	HashMap<Integer, TreeMap<RentCar, Integer>> searchMap;
+	HashMap<Integer, TreeSet<RentCar>> searchMap;
 	ArrayList<RentCar>[] idByCompany;
-	int[] priceByCar;
-	int[] limitByCar;
+	//int[] priceByCar;
+	//int[] limitByCar;
+	
 
 	public void init(int N) {
 		searchMap = new HashMap<>();
@@ -18,23 +19,24 @@ class UserSolution {
 			idByCompany[i] = new ArrayList<>();
 		}
 		
-		priceByCar =  new int[MAX];
-		limitByCar =  new int[MAX];
+		//priceByCar =  new int[MAX];
+		//limitByCar =  new int[MAX];
+		
 		return;
 	}
 	// 100_000
 	public void add(int mCarID, int mCompanyID, int[] mCarInfo) {
 		
 		int key = mCarInfo[0] * 100_000 + mCarInfo[1] * 1_000 + mCarInfo[2] * 10 + mCarInfo[3];
-		RentCar rc = new RentCar(key, mCarID, mCarInfo[5]);
+		RentCar rc = new RentCar(key, mCarID, mCarInfo[4], mCarInfo[5]);
 		
-		TreeMap<RentCar, Integer> tm = searchMap.getOrDefault(key, 
-				new TreeMap<RentCar, Integer>((o1, o2) -> o1.price == o2.price ? Integer.compare(o1.id, o2.id) : Integer.compare(o1.price, o2.price)));
-		tm.put(rc, key);
-		searchMap.put(key, tm);
+		TreeSet<RentCar> tset = searchMap.getOrDefault(key, 
+				new TreeSet<RentCar>((o1, o2) -> o1.price == o2.price ? Integer.compare(o1.id, o2.id) : Integer.compare(o1.price, o2.price)));
+		tset.add(rc);
+		searchMap.put(key, tset);
 		
-		limitByCar[mCarID] = mCarInfo[4];
-		priceByCar[mCarID] = mCarInfo[5];
+		//limitByCar[mCarID] = mCarInfo[4];
+		//priceByCar[mCarID] = mCarInfo[5];
 		idByCompany[mCompanyID].add(rc);
 		
 		return;
@@ -46,18 +48,18 @@ class UserSolution {
 		int key = mCondition[2] * 100_000 + mCondition[3] * 1_000 + mCondition[4] * 10 + mCondition[5];
 		if(!searchMap.containsKey(key)) return -1;
 		
-		TreeMap<RentCar, Integer> tm = searchMap.get(key);
-		while(!tm.isEmpty()) {
-			RentCar rc = tm.firstKey();
+		TreeSet<RentCar> tset = searchMap.get(key);
+		while(!tset.isEmpty()) {
+			RentCar rc = tset.first();
 			if(priceByCar[rc.id] != rc.price || limitByCar[rc.id] == 0 ||  rc.price == 0) {
-				tm.pollFirstEntry();
+				tset.pollFirst();
 				continue;
 			}			
 			break;
 		}
 		
-		for(Map.Entry<RentCar, Integer> entry : tm.entrySet()) {
-			RentCar rc = entry.getKey();
+		for(RentCar rc : tset) {
+			
 			Integer date1 = rc.rented.floorKey(mCondition[0]);
 			Integer date2 = rc.rented.ceilingKey(mCondition[0]);			
 			
@@ -78,8 +80,8 @@ class UserSolution {
 			if(rc.price == 0) continue;
 			if(limitByCar[rc.id] == 0) continue;
 			
-			TreeMap<RentCar, Integer> tm = searchMap.get(rc.hashcode);
-			tm.remove(rc);
+			TreeSet<RentCar> tset = searchMap.get(rc.hashcode);
+			tset.remove(rc);
 			
 			rc.price -= mDiscount;
 			if(rc.price < 0) {
@@ -89,9 +91,9 @@ class UserSolution {
 		
 			sum += rc.price;	
 			priceByCar[rc.id] = rc.price;
-			tm.put(rc, rc.hashcode);
+			tset.add(rc);
 			
-			searchMap.put(rc.hashcode, tm);
+			searchMap.put(rc.hashcode, tset);
 		}
 		
 		return sum;
@@ -100,12 +102,14 @@ class UserSolution {
 	class RentCar {
 		int hashcode;
 		int id;
+		int limit;
 		int price;
 		TreeMap<Integer, Integer> rented = new TreeMap<>();
 		
-		public RentCar(int hashcode, int id, int price) {
+		public RentCar(int hashcode, int id, int limit, int price) {
 			this.hashcode = hashcode;
 			this.id = id;
+			this.limit = limit;
 			this.price = price;
 		}
 	}
